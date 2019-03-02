@@ -129,13 +129,15 @@ class HomeScreen extends Component {
           const postObj = doc.data();
           const postFeed = that.state.post_feed;
           postFeed.push({
+            documentId: doc.id,
+            id: postObj.id,
             content: postObj.content,
             timestamp: that.timeConverter(postObj.timestamp),
             location: postObj.location,
             author: postObj.author,
             upvotes: postObj.upvotes,
             downvotes: postObj.downvotes,
-            fullscore: postObj.fullscore,
+            fullscore: postObj.upvotes - postObj.downvotes,
             nOfComments: postObj.nOfComments,
             topic: postObj.topic,
           });
@@ -178,7 +180,7 @@ class HomeScreen extends Component {
 
   renderItem({ item, index, section }) {
     console.log(item);
-    return <PostItem index={index} item={item} />;
+    return <PostItem key={item.documentId} index={index} item={item} />;
   }
 
   renderHead() {

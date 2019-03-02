@@ -59,7 +59,8 @@ export const signupUser = ({ email, password, username }) => {
         console.log('test');
         firebase.firestore().collection('users').doc(currentUser.uid).set({
           uid: currentUser.uid,
-          username
+          username,
+          originDate: Date.now()
         });
       })
       .then(() => {
@@ -87,8 +88,10 @@ export const PostChanged = (text) => {
 };
 
 export const PostCreate = ({ post, username }) => {
+  const uuid = require('uuid');
   return (dispatch) => {
     firebase.firestore().collection('posts').add({
+      id: uuid(),
       content: post,
       timestamp: (Math.floor(Date.now() / 1000)),
       location: 'Boston',
@@ -110,10 +113,13 @@ export const PostClose = () => {
 
 //Upvoting related---------
 
-export const upvotePressed = () => {
-  console.log(firebase.firestore().collection('posts').doc().id);
+export const upvotePressed = ({ documentId, upvotes }) => {
+  console.log(documentId);
 
-  return {
-    type: UPVOTE_PRESSED
+  return (dispatch) => {
+    firebase.firestore().collection('posts').doc(`${documentId}`).update({
+      upvotes: upvotes + 1
+    })
+    .then(dispatch({ type: UPVOTE_PRESSED }));
   };
 };

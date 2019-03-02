@@ -4,9 +4,14 @@ import { connect } from 'react-redux';
 
 import { upvotePressed } from '../actions';
 
+//const fullscore = this.props.item.upvotes - this.props.item.downvotes;
+
 class PostItem extends Component {
+
   onUpvotePress() {
-    this.props.upvotePressed();
+    //console.log(this.props.item.documentId);
+    const { documentId, upvotes } = this.props.item;
+    this.props.upvotePressed({ documentId, upvotes });
   }
 
   renderYourUsername() {
@@ -32,7 +37,7 @@ class PostItem extends Component {
   render() {
     const { item } = this.props;
     return (
-      <View style={{ paddingBottom: 15 }} key={this.props.index}>
+      <View style={{ paddingBottom: 15 }} key={this.props.key}>
         <View style={styles.postContainer}>
 
           <TouchableOpacity style={{ flexDirection: 'row' }}>
