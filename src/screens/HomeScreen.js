@@ -7,6 +7,7 @@ import 'firebase/firestore';
 import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostModal from '../components/PostModal';
 import PostItem from '../components/PostItem';
+import HeadlineItem from '../components/HeadlineItem';
 import { PostChanged, PostCreate, PostClose } from '../actions';
 
 const Header = () => {
@@ -153,26 +154,6 @@ class HomeScreen extends Component {
     });
   }
 
-  overrideRenderItem({ item, index, section: { title, data } }) {
-    return (
-      <View style={{ backgroundColor: 'white' }} key={index}>
-        <TouchableOpacity style={styles.headlineContainerStyle}>
-          <View style={styles.innerStyle}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={styles.numberStyle}>{item.order}</Text>
-              <Text style={styles.headlineStyle}>{item.headline}</Text>
-            </View>
-            <Image
-              style={{ width: 6, height: 12, right: 10 }}
-              source={require('../img/headlineArrow.png')}
-            />
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-
   loadNew = () => {
     //Load Feed
     this.loadFeed();
@@ -206,12 +187,14 @@ class HomeScreen extends Component {
               sections={[
                 { title: 'HEADLINES',
                   data: this.state.news_feed,
-                  renderItem: this.overrideRenderItem
+                  renderItem: ({ item, index }) => (
+                    <HeadlineItem index={index} item={item} navigation={this.props.navigation} />
+                  )
                 },
                 { title: 'DISCUSSION', data: this.state.post_feed }
               ]}
               renderItem={({ item, index, section }) => (
-                <PostItem index={index} item={item} />
+                <PostItem index={index} item={item} navigation={this.props.navigation} />
               )}
               renderSectionHeader={({ section }) => (
                 <View style={styles.sectionHeaderPadding}>
@@ -226,12 +209,7 @@ class HomeScreen extends Component {
           </View>
           )}
 
-        {/*  renderItem({ item, index, section }) {
-            console.log(item);
-            return <PostItem index={index} item={item} />;
-          }
-
-          Popup To Post */}
+        {/* Popup To Post */}
 
         <PostModal
           animationType='slide'
@@ -327,36 +305,6 @@ const styles = {
     letterSpacing: -0.5
   },
 
-  //Headline style
-  headlineContainerStyle: {
-    backgroundColor: 'white',
-    paddingTop: 26,
-  },
-
-  innerStyle: {
-    marginLeft: 18,
-    paddingRight: 18,
-    paddingBottom: 26,
-    borderBottomWidth: 0.5,
-    borderColor: '#DFDFDF',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-
-  numberStyle: {
-    fontFamily: 'Avenir-Black',
-    fontSize: 15,
-    color: '#FF5353'
-  },
-
-  headlineStyle: {
-    fontFamily: 'Avenir-Heavy',
-    fontSize: 14,
-    color: '#393939',
-    paddingLeft: 12
-  },
-
   //Section header style
   sectionHeaderPadding: {
     paddingTop: 15
@@ -396,8 +344,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  PostChanged,
-  PostCreate,
-  PostClose,
-})(HomeScreen);
+export default connect(mapStateToProps, { PostChanged, PostCreate, PostClose })(HomeScreen);

@@ -142,7 +142,7 @@ class PostItem extends Component {
               source={require('../img/postButtons/downvote.png')}
             />
           </TouchableOpacity>
-          
+
         </View>
       );
     } else if (downvoted) {
@@ -260,7 +260,9 @@ class PostItem extends Component {
             {this.renderUpvoteSection()}
 
             {/* Comments */}
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => { this.props.navigation.navigate('News'); }}
+            >
               <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                 <Image
                   style={{ width: 19, height: 17 }}

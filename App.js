@@ -8,6 +8,15 @@ import reducers from './src/reducers';
 import Router from './src/Router';
 
 export default class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      loading: false,
+      authenticated: false
+    };
+  }
+
   componentDidMount() {
     const config = {
       apiKey: 'AIzaSyA999J_iNxUGj5g97IYzeRPA-LV1VkBOWw',
@@ -19,7 +28,24 @@ export default class App extends Component {
     };
 
     firebase.initializeApp(config);
+
+    // this.checkAuthentication();
+    // console.log(this.state);
   }
+
+  // componentDidUpdate() {
+  //   this.checkAuthentication();
+  // }
+  //
+  // checkAuthentication() {
+  //   firebase.auth().onAuthStateChanged((user) => {
+  //         if (user) {
+  //           this.setState({ loading: false, authenticated: true });
+  //         } else {
+  //           this.setState({ loading: false, authenticated: false });
+  //         }
+  //       });
+  // }
 
   render() {
     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
