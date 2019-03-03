@@ -208,7 +208,7 @@ class HomeScreen extends Component {
                   data: this.state.news_feed,
                   renderItem: this.overrideRenderItem
                 },
-                { title: 'DISCUSSION', data: this.state.post_feed}
+                { title: 'DISCUSSION', data: this.state.post_feed }
               ]}
               renderItem={({ item, index, section }) => (
                 <PostItem index={index} item={item} />
@@ -391,7 +391,7 @@ const mapStateToProps = (state) => {
   console.log(state.auth.user.displayName);
   return {
     post: state.post.PostText,
-    list: state.list,
+    feed: state.feed,
     username: state.auth.user.displayName
   };
 };

@@ -10,7 +10,9 @@ import {
   POST_TEXT_CHANGED,
   POST_CREATED,
   POST_CLOSED,
-  UPVOTE_PRESSED
+  UPVOTE_PRESSED,
+  DOWNVOTE_PRESSED,
+  LOAD_POSTS
 } from './types';
 
 //Authentication ---------
@@ -77,6 +79,13 @@ export const authUserFail = (dispatch) => {
 
 //Gettting basic user info  ---------
 
+//Loading the homepage feed -----------
+export const LoadPosts = () => {
+  return {
+    type: LOAD_POSTS
+
+  };
+};
 
 //Posting related-----
 
@@ -89,19 +98,30 @@ export const PostChanged = (text) => {
 
 export const PostCreate = ({ post, username }) => {
   const uuid = require('uuid');
+  const posts = firebase.firestore().collection('posts');
+  const currentUser = firebase.auth().currentUser;
   return (dispatch) => {
-    firebase.firestore().collection('posts').add({
+    posts.add({
       id: uuid(),
       content: post,
       timestamp: (Math.floor(Date.now() / 1000)),
       location: 'Boston',
       author: username,
+      uid: currentUser.uid,
       upvotes: 1,
       downvotes: 0,
-      fullscore: 1,
       nOfComments: 0,
       topic: 'Test Topic',
-    }).then(dispatch({ type: POST_CREATED }));
+    })
+    .then((docRef) => {
+        posts.doc(`${docRef.id}`).collection('scoreStatus').doc(`${currentUser.uid}`).set({
+          uid: currentUser.uid,
+          upvoted: true,
+          downvoted: false
+      })
+      .catch((console.log('something went wrong')));
+    })
+    .then(dispatch({ type: POST_CREATED }));
   };
 };
 
@@ -111,15 +131,120 @@ export const PostClose = () => {
   };
 };
 
-//Upvoting related---------
+//Voting related---------
 
-export const upvotePressed = ({ documentId, upvotes }) => {
-  console.log(documentId);
+export const upvotePressedTF = ({ documentId, upvotes }) => {
+  const currentUser = firebase.auth().currentUser;
+  const postDoc = firebase.firestore().collection('posts').doc(`${documentId}`);
 
   return (dispatch) => {
-    firebase.firestore().collection('posts').doc(`${documentId}`).update({
-      upvotes: upvotes + 1
+    postDoc.update({
+      upvotes
+    })
+    .then(() => {
+      postDoc.collection('scoreStatus').doc(`${currentUser.uid}`).set({
+        uid: currentUser.uid,
+        upvoted: false,
+        downvoted: false
+      });
     })
     .then(dispatch({ type: UPVOTE_PRESSED }));
+  };
+};
+
+export const upvotePressedFF = ({ documentId, upvotes }) => {
+  const currentUser = firebase.auth().currentUser;
+  const postDoc = firebase.firestore().collection('posts').doc(`${documentId}`);
+
+  return (dispatch) => {
+    postDoc.update({
+      upvotes: upvotes + 1
+    })
+    .then(() => {
+      postDoc.collection('scoreStatus').doc(`${currentUser.uid}`).set({
+        uid: currentUser.uid,
+        upvoted: true,
+        downvoted: false
+      });
+    })
+    .then(dispatch({ type: UPVOTE_PRESSED }));
+  };
+};
+
+export const upvotePressedFT = ({ documentId, upvotes, downvotes }) => {
+  const currentUser = firebase.auth().currentUser;
+  const postDoc = firebase.firestore().collection('posts').doc(`${documentId}`);
+
+  return (dispatch) => {
+    postDoc.update({
+      upvotes: upvotes + 1,
+      downvotes
+    })
+    .then(() => {
+      postDoc.collection('scoreStatus').doc(`${currentUser.uid}`).set({
+        uid: currentUser.uid,
+        upvoted: true,
+        downvoted: false
+      });
+    })
+    .then(dispatch({ type: UPVOTE_PRESSED }));
+  };
+};
+
+export const downvotePressedTF = ({ documentId, upvotes, downvotes }) => {
+  const currentUser = firebase.auth().currentUser;
+  const postDoc = firebase.firestore().collection('posts').doc(`${documentId}`);
+
+  return (dispatch) => {
+    postDoc.update({
+      upvotes,
+      downvotes: downvotes + 1
+    })
+    .then(() => {
+      postDoc.collection('scoreStatus').doc(`${currentUser.uid}`).set({
+        uid: currentUser.uid,
+        upvoted: false,
+        downvoted: true
+      });
+    })
+    .then(dispatch({ type: DOWNVOTE_PRESSED }));
+  };
+};
+
+export const downvotePressedFF = ({ documentId, downvotes }) => {
+  const currentUser = firebase.auth().currentUser;
+  const postDoc = firebase.firestore().collection('posts').doc(`${documentId}`);
+
+  return (dispatch) => {
+    postDoc.update({
+      downvotes: downvotes + 1
+    })
+    .then(() => {
+      postDoc.collection('scoreStatus').doc(`${currentUser.uid}`).set({
+        uid: currentUser.uid,
+        upvoted: false,
+        downvoted: true
+      });
+    })
+    .then(dispatch({ type: DOWNVOTE_PRESSED }));
+  };
+};
+
+export const downvotePressedFT = ({ documentId, downvotes }) => {
+  const currentUser = firebase.auth().currentUser;
+  const postDoc = firebase.firestore().collection('posts').doc(`${documentId}`);
+
+  return (dispatch) => {
+    postDoc.update({
+      downvotes
+    })
+    .then(() => {
+      postDoc.collection('scoreStatus').doc(`${currentUser.uid}`).set({
+        uid: currentUser.uid,
+        upvoted: false,
+        downvoted: false
+      });
+    })
+    .then(dispatch({ type: DOWNVOTE_PRESSED }));
   };
 };

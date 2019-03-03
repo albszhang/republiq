@@ -8,3 +8,5 @@ export const AUTH_USER_FAIL = 'auth_user_fail';
 export const POST_CREATED = 'post_created';
 export const POST_CLOSED = 'post_closed';
 export const UPVOTE_PRESSED = 'upvote_pressed';
+export const DOWNVOTE_PRESSED = 'downvote_pressed';
+export const LOAD_POSTS = 'load_posts';

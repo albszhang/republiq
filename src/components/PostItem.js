@@ -1,17 +1,202 @@
 import React, { Component } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
+import firebase from 'firebase';
+import { Haptic } from 'expo';
 
-import { upvotePressed } from '../actions';
-
-//const fullscore = this.props.item.upvotes - this.props.item.downvotes;
+import {
+  upvotePressedTF,
+  upvotePressedFF,
+  upvotePressedFT,
+  downvotePressedTF,
+  downvotePressedFF,
+  downvotePressedFT
+} from '../actions';
 
 class PostItem extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      score: this.props.item.fullscore,
+      upvotes: this.props.item.upvotes,
+      downvotes: this.props.item.downvotes,
+      upvoted: false,
+      downvoted: false
+    };
+
+    //console.log(this.state);
+  }
+
+  componentDidMount() {
+    this.checkVoted();
+  }
 
   onUpvotePress() {
-    //console.log(this.props.item.documentId);
-    const { documentId, upvotes } = this.props.item;
-    this.props.upvotePressed({ documentId, upvotes });
+    const { documentId, upvotes, downvotes } = this.props.item;
+    const { score, upvoted, downvoted } = this.state;
+    //note that when there is no "===", it is just syntactic sugar for "=== true"
+    //ex. in (upvoted && downvoted === false) -> upvoted === true
+    if (upvoted && downvoted === false) {
+      this.setState({
+        score: score - 1,
+        upvoted: false
+      });
+      this.props.upvotePressedTF({ documentId, upvotes });
+      Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
+    } else if (upvoted === false && downvoted === false) {
+      this.setState({
+        score: score + 1,
+        upvoted: true
+      });
+      this.props.upvotePressedFF({ documentId, upvotes });
+      Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
+    } else if (upvoted === false && downvoted) {
+      this.setState({
+        score: score + 2,
+        upvoted: true,
+        downvoted: false
+      });
+      this.props.upvotePressedFT({ documentId, upvotes, downvotes });
+      Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
+    }
+  }
+
+  onDownvotePress() {
+    const { documentId, upvotes, downvotes } = this.props.item;
+    const { score, upvoted, downvoted } = this.state;
+
+    if (upvoted && downvoted === false) {
+      this.setState({
+        score: score - 2,
+        upvoted: false,
+        downvoted: true
+      });
+      this.props.downvotePressedTF({ documentId, upvotes, downvotes });
+      Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
+    } else if (upvoted === false && downvoted === false) {
+      this.setState({
+        score: score - 1,
+        downvoted: true
+      });
+      this.props.downvotePressedFF({ documentId, downvotes });
+      Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
+    } else if (upvoted === false && downvoted) {
+      this.setState({
+        score: score + 1,
+        downvoted: false
+      });
+      this.props.downvotePressedFT({ documentId, downvotes });
+      Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
+    }
+  }
+
+  checkVoted = () => {
+    const { documentId } = this.props.item;
+    const currentUser = firebase.auth().currentUser;
+    const postDoc =
+      firebase.firestore().collection('posts').doc(`${documentId}`).collection('scoreStatus')
+      .doc(`${currentUser.uid}`);
+
+    postDoc.get().then((doc) => {
+      console.log(doc);
+
+      if (doc.exists) {
+        this.setState({
+          upvoted: doc.data().upvoted,
+          downvoted: doc.data().downvoted
+        });
+      } else {
+          this.setState({
+            upvoted: false,
+            downvoted: false
+          });
+      }
+    });
+  }
+
+  renderUpvoteSection() {
+    const { upvoted, downvoted } = this.state;
+
+    if (upvoted) {
+      return (
+        <View style={styles.upvoteContainerStyle}>
+          <TouchableOpacity
+            style={{ width: 27, height: 14.4, justifyContent: 'center', alignItems: 'center' }}
+            onPress={this.onUpvotePress.bind(this)}
+          >
+            <Image
+              style={{ width: 15, height: 8 }}
+              source={require('../img/postButtons/upvoteActive.png')}
+            />
+          </TouchableOpacity>
+
+          <Text style={styles.upvoteActiveText}>{this.state.score}</Text>
+
+          <TouchableOpacity
+            style={{ width: 27, height: 14.4, justifyContent: 'center', alignItems: 'center' }}
+            onPress={this.onDownvotePress.bind(this)}
+          >
+            <Image
+              style={{ width: 15, height: 8 }}
+              source={require('../img/postButtons/downvote.png')}
+            />
+          </TouchableOpacity>
+          
+        </View>
+      );
+    } else if (downvoted) {
+      return (
+        <View style={styles.upvoteContainerStyle}>
+          <TouchableOpacity
+            style={styles.upvoteFormat}
+            onPress={this.onUpvotePress.bind(this)}
+          >
+            <Image
+              style={{ width: 15, height: 8 }}
+              source={require('../img/postButtons/upvote.png')}
+            />
+          </TouchableOpacity>
+
+          <Text style={styles.downvoteActiveText}>{this.state.score}</Text>
+
+          <TouchableOpacity
+            style={styles.upvoteFormat}
+            onPress={this.onDownvotePress.bind(this)}
+          >
+            <Image
+              style={{ width: 15, height: 8 }}
+              source={require('../img/postButtons/downvoteActive.png')}
+            />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+      return (
+        <View style={styles.upvoteContainerStyle}>
+          <TouchableOpacity
+            style={styles.upvoteFormat}
+            onPress={this.onUpvotePress.bind(this)}
+          >
+            <Image
+              style={{ width: 15, height: 8 }}
+              source={require('../img/postButtons/upvote.png')}
+            />
+          </TouchableOpacity>
+
+          <Text style={styles.upvoteText}>{this.state.score}</Text>
+
+          <TouchableOpacity
+            style={styles.upvoteFormat}
+            onPress={this.onDownvotePress.bind(this)}
+          >
+            <Image
+              style={{ width: 15, height: 8 }}
+              source={require('../img/postButtons/downvote.png')}
+            />
+          </TouchableOpacity>
+        </View>
+      );
   }
 
   renderYourUsername() {
@@ -72,26 +257,7 @@ class PostItem extends Component {
           <View style={styles.bottomBar}>
 
             {/* Upvote and Downvote*/}
-            <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-              <TouchableOpacity
-                style={{ width: 18, height: 9.6 }}
-                onPress={this.onUpvotePress.bind(this)}
-              >
-                <Image
-                  style={{ width: 15, height: 8 }}
-                  source={require('../img/postButtons/upvote.png')}
-                />
-              </TouchableOpacity>
-
-              <Text style={styles.upvoteText}>{item.fullscore}</Text>
-
-              <TouchableOpacity style={{ width: 18, height: 9.6 }}>
-                <Image
-                  style={{ width: 15, height: 8 }}
-                  source={require('../img/postButtons/downvote.png')}
-                />
-              </TouchableOpacity>
-            </View>
+            {this.renderUpvoteSection()}
 
             {/* Comments */}
             <TouchableOpacity>
@@ -179,6 +345,35 @@ const styles = {
     color: '#959595',
     paddingLeft: 14,
     paddingRight: 14
+  },
+
+  upvoteActiveText: {
+    fontSize: 13,
+    fontFamily: 'Avenir-Medium',
+    color: '#FF7C52',
+    paddingLeft: 14,
+    paddingRight: 14
+  },
+
+  downvoteActiveText: {
+    fontSize: 13,
+    fontFamily: 'Avenir-Medium',
+    color: '#6C8FE8',
+    paddingLeft: 14,
+    paddingRight: 14
+  },
+
+  upvoteFormat: {
+    width: 27,
+    height: 14.4,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  upvoteContainerStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    left: -4
   }
 };
 
@@ -188,4 +383,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { upvotePressed })(PostItem);
+export default connect(mapStateToProps, {
+  upvotePressedTF,
+  upvotePressedFF,
+  upvotePressedFT,
+  downvotePressedTF,
+  downvotePressedFF,
+  downvotePressedFT
+})(PostItem);
