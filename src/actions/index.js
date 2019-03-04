@@ -1,6 +1,12 @@
 import firebase from 'firebase';
+//import * as firebase from 'firebase';
+import 'firebase/firestore';
 
 import {
+  IS_INITIALIZED,
+  NOT_INITIALIZED,
+  IS_AUTHENTICATED,
+  NOT_AUTHENTICATED,
   EMAIL_CHANGED,
   PASSWORD_CHANGED,
   USERNAME_CHANGED,
@@ -12,10 +18,39 @@ import {
   POST_CLOSED,
   UPVOTE_PRESSED,
   DOWNVOTE_PRESSED,
-  LOAD_POSTS
+  LOAD_POSTS,
+  REFRESH_POSTS
 } from './types';
 
+//checking if things are isInitialized
+
+export const isInitialized = () => {
+  return {
+    type: IS_INITIALIZED
+  };
+};
+
+export const notInitialized = () => {
+  return {
+    type: NOT_INITIALIZED
+  };
+};
+
 //Authentication ---------
+
+export const isAuthenticated = () => {
+  return {
+    type: IS_AUTHENTICATED,
+    payload: true
+  };
+};
+
+export const notAuthenticated = () => {
+  return {
+    type: NOT_AUTHENTICATED,
+    payload: false
+  };
+};
 
 export const passwordChanged = (text) => {
   return {
@@ -38,17 +73,19 @@ export const usernameChanged = (text) => {
   };
 };
 
-export const loginUser = ({ email, password }) => {
+export const loginUser = ({ email, password, navigation }) => {
   return (dispatch) => {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
+        //navigation.navigate('App');
+        console.log(firebase.auth().currentUser);
         dispatch({ type: LOGIN_USER_SUCCESS, payload: firebase.auth().currentUser });
       })
       .catch(() => authUserFail(dispatch));
   };
 };
 
-export const signupUser = ({ email, password, username }) => {
+export const signupUser = ({ email, password, username, navigation }) => {
   return (dispatch) => {
     firebase.auth().createUserWithEmailAndPassword(email, password)
     //see https://stackoverflow.com/questions/38559457/firebase-v3-updateprofile-method
@@ -66,6 +103,7 @@ export const signupUser = ({ email, password, username }) => {
         });
       })
       .then(() => {
+        navigation.navigate('App');
         dispatch({ type: SIGNUP_USER_SUCCESS, payload: firebase.auth().currentUser });
       })
       .catch(() => authUserFail(dispatch));
@@ -81,9 +119,77 @@ export const authUserFail = (dispatch) => {
 
 //Loading the homepage feed -----------
 export const LoadPosts = () => {
-  return {
-    type: LOAD_POSTS
+  return (dispatch) => {
+    pluralCheck = (s) => {
+      if (s === 1) {
+        return ' ago';
+      }
+      return 's ago';
+    };
 
+    timeConverter = (timestamp) => {
+      const a = new Date(timestamp * 1000);
+      const seconds = Math.floor((new Date() - a) / 1000);
+
+      let interval = Math.floor(seconds / 31536000);
+
+      if (interval > 1) {
+        return interval + ' year' + this.pluralCheck(interval);
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval > 1) {
+        return interval + ' month' + this.pluralCheck(interval);
+      }
+      interval = Math.floor(seconds / 86400);
+      if (interval > 1) {
+        return interval + ' day' + this.pluralCheck(interval);
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval > 1) {
+        return interval + ' hr' + this.pluralCheck(interval);
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval > 1) {
+        return interval + ' min' + this.pluralCheck(interval);
+      }
+      return Math.floor(seconds) + ' second' + this.pluralCheck(interval);
+    };
+
+    const that = this;
+
+    //getting data
+    firebase.firestore().collection('posts').get().then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        if (doc.exists) {
+          console.log(doc.data());
+
+          const postObj = doc.data();
+          //const postFeed = that.state.post_feed;
+          dispatch({
+            type: LOAD_POSTS,
+            payload: {
+              documentId: doc.id,
+              id: postObj.id,
+              content: postObj.content,
+              timestamp: that.timeConverter(postObj.timestamp),
+              location: postObj.location,
+              author: postObj.author,
+              upvotes: postObj.upvotes,
+              downvotes: postObj.downvotes,
+              fullscore: postObj.upvotes - postObj.downvotes,
+              nOfComments: postObj.nOfComments,
+              topic: postObj.topic,
+            }
+          });
+        }
+      });
+    });
+  };
+};
+
+export const RefreshPosts = () => {
+  return {
+    type: REFRESH_POSTS,
   };
 };
 

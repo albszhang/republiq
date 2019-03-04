@@ -13,6 +13,8 @@ import {
   downvotePressedFT
 } from '../actions';
 
+const username = 'testUsername';
+
 class PostItem extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +31,10 @@ class PostItem extends Component {
   }
 
   componentDidMount() {
-    this.checkVoted();
+    const { authed } = this.props;
+    if (authed) {
+      this.checkVoted();
+    }
   }
 
   onUpvotePress() {
@@ -201,8 +206,8 @@ class PostItem extends Component {
 
   renderYourUsername() {
     const { item } = this.props;
-
-    if (this.props.username === item.author) {
+    // originally this.props.username, but I'm testing for whether the displayname is funky
+    if (username === item.author) {
       return (
         <View style={{ flexDirection: 'row' }}>
           <Text style={styles.yourUsernameText}>YOU</Text>
@@ -381,7 +386,8 @@ const styles = {
 
 const mapStateToProps = (state) => {
   return {
-    username: state.auth.user.displayName
+    //username: state.auth.user.displayName
+    authed: state.auth.authenticated
   };
 };
 

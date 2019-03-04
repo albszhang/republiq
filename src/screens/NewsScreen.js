@@ -27,4 +27,4 @@ const styles = {
   }
 };
 
-export default withNavigation(NewsScreen);
+export default NewsScreen;

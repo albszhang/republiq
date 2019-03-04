@@ -1,3 +1,7 @@
+export const IS_INITIALIZED = 'it_initialized';
+export const NOT_INITIALIZED = 'not_initialized';
+export const IS_AUTHENTICATED = 'is_authenticated';
+export const NOT_AUTHENTICATED = 'not_authenticated';
 export const POST_TEXT_CHANGED = 'post_text_changed';
 export const EMAIL_CHANGED = 'email_changed';
 export const PASSWORD_CHANGED = 'password_changed';
@@ -10,3 +14,4 @@ export const POST_CLOSED = 'post_closed';
 export const UPVOTE_PRESSED = 'upvote_pressed';
 export const DOWNVOTE_PRESSED = 'downvote_pressed';
 export const LOAD_POSTS = 'load_posts';
+export const REFRESH_POSTS = 'refresh_posts';

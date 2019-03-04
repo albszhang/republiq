@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity, Alert, Image, Text, SectionList } from 'react-native';
 import { connect } from 'react-redux';
-import firebase from 'firebase';
-import 'firebase/firestore';
 
 import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostModal from '../components/PostModal';
 import PostItem from '../components/PostItem';
 import HeadlineItem from '../components/HeadlineItem';
-import { PostChanged, PostCreate, PostClose } from '../actions';
+import { PostChanged, PostCreate, PostClose, LoadPosts, RefreshPosts } from '../actions';
 
 const Header = () => {
   return (
@@ -36,8 +34,8 @@ class HomeScreen extends Component {
     this.state = {
       modalVisible: false,
       refresh: false,
+      loading: false,
 
-      post_feed: [],
       news_feed: [
         {
           order: '1.',
@@ -66,7 +64,6 @@ class HomeScreen extends Component {
   componentDidMount() {
     //Load Feed
     this.loadFeed();
-    console.log(this.timeConverter(1550944679));
   }
 
   onClosePostModal() {
@@ -77,80 +74,18 @@ class HomeScreen extends Component {
     this.setState({ modalVisible: visible });
   }
 
-  pluralCheck = (s) => {
-    if (s === 1) {
-      return ' ago';
-    }
-    return 's ago';
-  }
-
-  timeConverter = (timestamp) => {
-    const a = new Date(timestamp * 1000);
-    const seconds = Math.floor((new Date() - a) / 1000);
-
-    let interval = Math.floor(seconds / 31536000);
-
-    if (interval > 1) {
-      return interval + ' year' + this.pluralCheck(interval);
-    }
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) {
-      return interval + ' month' + this.pluralCheck(interval);
-    }
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) {
-      return interval + ' day' + this.pluralCheck(interval);
-    }
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) {
-      return interval + ' hr' + this.pluralCheck(interval);
-    }
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) {
-      return interval + ' min' + this.pluralCheck(interval);
-    }
-    return Math.floor(seconds) + ' second' + this.pluralCheck(interval);
-  }
-
-
   loadFeed = () => {
     this.setState({
       refresh: true,
-      post_feed: [],
       //news_feed: [] <- put this in after you can load from firebase
     });
 
-    const that = this;
+    this.props.RefreshPosts(); //empties the post_feed action state
+    this.props.LoadPosts();
 
-    //getting data
-    firebase.firestore().collection('posts').get().then((snapshot) => {
-      snapshot.docs.forEach(doc => {
-        if (doc.exists) {
-          //console.log(doc.data());
-          const postObj = doc.data();
-          const postFeed = that.state.post_feed;
-          postFeed.push({
-            documentId: doc.id,
-            id: postObj.id,
-            content: postObj.content,
-            timestamp: that.timeConverter(postObj.timestamp),
-            location: postObj.location,
-            author: postObj.author,
-            upvotes: postObj.upvotes,
-            downvotes: postObj.downvotes,
-            fullscore: postObj.upvotes - postObj.downvotes,
-            nOfComments: postObj.nOfComments,
-            topic: postObj.topic,
-          });
-
-          that.setState({
-            refresh: false,
-            loading: false
-          });
-
-          console.log(that.state.post_feed);
-        }
-      });
+    this.setState({
+      refresh: false,
+      loading: false
     });
   }
 
@@ -191,7 +126,7 @@ class HomeScreen extends Component {
                     <HeadlineItem index={index} item={item} navigation={this.props.navigation} />
                   )
                 },
-                { title: 'DISCUSSION', data: this.state.post_feed }
+                { title: 'DISCUSSION', data: this.props.post_feed }
               ]}
               renderItem={({ item, index, section }) => (
                 <PostItem index={index} item={item} navigation={this.props.navigation} />
@@ -336,12 +271,19 @@ const styles = {
 };
 
 const mapStateToProps = (state) => {
-  console.log(state.auth.user.displayName);
+  //console.log(state.auth.user.displayName);
   return {
     post: state.post.PostText,
-    feed: state.feed,
-    username: state.auth.user.displayName
+    post_feed: state.feed.post_feed,
+    //username: state.auth.user.displayName
   };
 };
 
-export default connect(mapStateToProps, { PostChanged, PostCreate, PostClose })(HomeScreen);
+export default connect(mapStateToProps, {
+  PostChanged,
+  PostCreate,
+  PostClose,
+  RefreshPosts,
+  LoadPosts
+})(HomeScreen);
+//export default HomeScreen;

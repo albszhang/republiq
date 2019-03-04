@@ -1,17 +1,35 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-
-
-const uuidv1 = require('uuid');
+import { View, Text, Alert, TouchableOpacity } from 'react-native';
+import firebase from 'firebase';
 
 class ProfileScreen extends Component {
+  constructor() {
+    super();
+    this.state = {
+      username: firebase.auth().currentUser.displayName
+    };
+  }
+
+  onSignoutButtonPress() {
+    console.log('Signout button pressed');
+    firebase.auth().signOut().then(() => {
+      this.props.navigation.navigate('Auth');
+    })
+    .catch((error) => {
+      Alert.alert(error);
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text>Profile!! :)</Text>
-        <Text>{uuidv1()}</Text>
-        <Text>{uuidv1()}</Text>
-        <Text>{uuidv1()}</Text>
+        <Text>{this.state.username}</Text>
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          onPress={this.onSignoutButtonPress.bind(this)}
+        >
+          <Text style={styles.buttonTextStyle}>Sign Out</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -23,6 +41,20 @@ const styles = {
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  buttonStyle: {
+    height: 35,
+    width: 110,
+    borderRadius: 100,
+    backgroundColor: '#FF5D53',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  buttonTextStyle: {
+    fontFamily: 'Avenir-Black',
+    fontSize: 14,
+    color: 'white'
   }
 };
 

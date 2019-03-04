@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { connect } from 'react-redux';
+import { withNavigation } from 'react-navigation';
 
 import { emailChanged, passwordChanged, usernameChanged, loginUser, signupUser } from '../actions';
 import LoginForm from '../components/LoginForm';
@@ -11,8 +12,10 @@ class SignInScreen extends Component {
   };
 
   componentDidUpdate() {
+    //console.log('component updated');
     if (this.props.user) {
-      this.props.navigation.navigate('App');
+      console.log('there exists a user');
+      this.props.navigation.navigate('AuthScreen');
     }
   }
 
@@ -29,16 +32,17 @@ class SignInScreen extends Component {
   }
 
   onLoginButtonPress() {
-    const { email, password } = this.props;
+    console.log('LoginButton Pressed');
+    const { email, password, navigation } = this.props;
 
-    this.props.loginUser({ email, password });
+    this.props.loginUser({ email, password, navigation });
     //this.props.navigation.navigate('App');
   }
 
   onSignupButtonPress() {
-    const { email, password, username } = this.props;
+    const { email, password, username, navigation } = this.props;
 
-    this.props.signupUser({ email, password, username });
+    this.props.signupUser({ email, password, username, navigation });
   }
 
   renderError() {
