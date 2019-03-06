@@ -34,9 +34,9 @@ export default (state = INITIAL_STATE, action) => {
     case NOT_AUTHENTICATED:
       return { ...state, authenticated: action.payload };
     case SIGNUP_USER_SUCCESS:
-      return { ...state, user: action.payload, email: '', password: '' };
+      return { ...state, user: action.payload, email: '', password: '', username: '' };
     case LOGIN_USER_SUCCESS:
-      return { ...state, user: action.payload, email: '', password: '' };
+      return { ...state, user: action.payload, email: '', password: '', username: '' };
     case EMAIL_CHANGED:
       return { ...state, email: action.payload };
     case PASSWORD_CHANGED:

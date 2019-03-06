@@ -234,7 +234,7 @@ class PostItem extends Component {
 
             <View style={{ paddingTop: 1, paddingRight: 7 }}>
               <Image
-                style={{ width: 10, height: 13 }}
+                style={{ width: 11, height: 14.3 }}
                 source={require('../img/staticFire.png')}
               />
             </View>

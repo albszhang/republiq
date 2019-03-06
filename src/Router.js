@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator, Image } from 'react-native';
 import {
   createStackNavigator,
   createSwitchNavigator,
@@ -48,6 +48,67 @@ const AppStackNavigator = createBottomTabNavigator(
     Notif: {
       screen: NotifScreen
     },
+  },
+  {
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ tintColor }) => {
+        const { routeName } = navigation.state;
+        if (routeName === 'Home') {
+          if (tintColor === 'tomato') {
+            return (
+              <Image
+                style={{ width: 24.64, height: 26.4 }}
+                source={require('./img/bottomTab/homeActive.png')}
+              />
+            );
+          } else if (tintColor === 'gray') {
+            return (
+              <Image
+                style={{ width: 24.64, height: 26.4 }}
+                source={require('./img/bottomTab/homeInactive.png')}
+              />
+            );
+          }
+        } else if (routeName === 'Profile') {
+          if (tintColor === 'tomato') {
+            return (
+              <Image
+                style={{ width: 28.6, height: 28.6 }}
+                source={require('./img/bottomTab/profileActive.png')}
+              />
+            );
+          } else if (tintColor === 'gray') {
+            return (
+              <Image
+                style={{ width: 28.6, height: 28.6 }}
+                source={require('./img/bottomTab/profileInactive.png')}
+              />
+            );
+          }
+        } else if (routeName === 'Notif') {
+          if (tintColor === 'tomato') {
+            return (
+              <Image
+                style={{ width: 23.05, height: 24.2 }}
+                source={require('./img/bottomTab/notifsActive.png')}
+              />
+            );
+          } else if (tintColor === 'gray') {
+            return (
+              <Image
+                style={{ width: 23.05, height: 24.2 }}
+                source={require('./img/bottomTab/notifsInactive.png')}
+              />
+            );
+          }
+        }
+      }
+    }),
+    tabBarOptions: {
+      activeTintColor: 'tomato',
+      inactiveTintColor: 'gray',
+      showLabel: false
+    }
   }
 );
 

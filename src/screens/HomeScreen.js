@@ -6,6 +6,7 @@ import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostModal from '../components/PostModal';
 import PostItem from '../components/PostItem';
 import HeadlineItem from '../components/HeadlineItem';
+import SectionHeader from '../components/SectionHeader';
 import { PostChanged, PostCreate, PostClose, LoadPosts, RefreshPosts } from '../actions';
 
 const Header = () => {
@@ -94,11 +95,6 @@ class HomeScreen extends Component {
     this.loadFeed();
   }
 
-  renderItem({ item, index, section }) {
-    console.log(item);
-    return <PostItem key={item.documentId} index={index} item={item} />;
-  }
-
   renderHead() {
     return <Header />;
   }
@@ -109,7 +105,7 @@ class HomeScreen extends Component {
         <View style={{ zIndex: 1 }}>
           <WhiteStatusBar />
         </View>
-        {/* FlatList rendering the header, newsfeed, and postfeed */}
+        {/* SectionList rendering the header, newsfeed, and postfeed */}
         {this.state.loading === true ? (
           <View>
             <Text style={{ justifyContent: 'center', alignItems: 'center' }}>Loading</Text>
@@ -132,11 +128,7 @@ class HomeScreen extends Component {
                 <PostItem index={index} item={item} navigation={this.props.navigation} />
               )}
               renderSectionHeader={({ section }) => (
-                <View style={styles.sectionHeaderPadding}>
-                  <View style={styles.sectionHeaderContainerStyle}>
-                    <Text style={styles.sectionHeaderText}>{section.title}</Text>
-                  </View>
-                </View>
+                <SectionHeader section={section} />
               )}
               ListHeaderComponent={this.renderHead}
               keyExtractor={(item, index) => index.toString()}
@@ -241,27 +233,6 @@ const styles = {
   },
 
   //Section header style
-  sectionHeaderPadding: {
-    paddingTop: 15
-  },
-
-  sectionHeaderContainerStyle: {
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 18,
-    paddingTop: 11,
-    paddingBottom: 11,
-    borderBottomWidth: 0.5,
-    borderColor: '#DFDFDF',
-  },
-
-  sectionHeaderText: {
-    fontFamily: 'Avenir-Black',
-    fontSize: 12,
-    color: '#595959'
-  },
-
   sectionSeparatorStyle: {
     flex: 1,
     height: 15,

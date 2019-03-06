@@ -13,7 +13,7 @@ import LoadingScreen from './src/screens/LoadingScreen';
 
 let firebaseAppDefined = false;
 
-class CheckApp extends Component {
+class App extends Component {
   componentDidMount() {
     const config = {
       apiKey: 'AIzaSyA999J_iNxUGj5g97IYzeRPA-LV1VkBOWw',
@@ -24,13 +24,8 @@ class CheckApp extends Component {
       messagingSenderId: '63676145911'
     };
     firebase.initializeApp(config);
-    //this.checkAuthentication();
     console.log('INITIALIZED');
   }
-
-  // componentDidUpdate() {
-  //   this.checkAuthentication();
-  // }
 
   interval() {
     setInterval(() => {
@@ -41,47 +36,40 @@ class CheckApp extends Component {
       }
     }, 100);
   }
-  //
-  // checkAuthentication() {
-  //   firebase.auth().onAuthStateChanged((user) => {
-  //         if (user) {
-  //           this.props.isAuthenticated(user);
-  //           //console.log(user);
-  //         } else {
-  //           this.props.notAuthenticated();
-  //           //console.log('not signed in');
-  //         }
-  //   });
-  // }
 
   render() {
+    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
     this.interval();
     // return firebaseAppDefined ? <Router auth={this.props.authenticated} /> :
     //   <LoadingScreen />;
-    return <Router authenticated={this.props.authenticated} />;
-  }
-}
-
-const mapStateToProps = (state) => {
-  console.log('app.js state of auth ->', state.auth.authenticated);
-  return {
-    initialized: state.auth.initialized,
-    authenticated: state.auth.authenticated
-  };
-};
-
-const ConnectedApp =
-  connect(mapStateToProps, {
-    isInitialized, isAuthenticated, notAuthenticated
-  })(CheckApp);
-
-const App = () => {
-    const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
     return (
       <Provider store={store}>
-        <ConnectedApp />
+        <Router />
       </Provider>
     );
-};
+  }
+}
+//
+// const mapStateToProps = (state) => {
+//   console.log('app.js state of auth ->', state.auth.authenticated);
+//   return {
+//     initialized: state.auth.initialized,
+//     authenticated: state.auth.authenticated
+//   };
+// };
+//
+// const ConnectedApp =
+//   connect(mapStateToProps, {
+//     isInitialized, isAuthenticated, notAuthenticated
+//   })(CheckApp);
+//
+// const App = () => {
+//     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
+//     return (
+//       <Provider store={store}>
+//         <ConnectedApp />
+//       </Provider>
+//     );
+// };
 
 export default App;
