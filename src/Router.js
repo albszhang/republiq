@@ -144,7 +144,7 @@ class AuthLoading extends Component {
        if (!firebaseAppDefined) {
          if (firebase.app()) {
            firebase.auth().onAuthStateChanged((user) => {
-             //this.checkAuthentication();
+             this.checkAuthentication();
              console.log('TESTING FOR PROPS', this.props.authenticated);
              console.log('AFTER LOGIN');
               //this.props.navigation.navigate(this.state.authed ? 'App' : 'Auth');

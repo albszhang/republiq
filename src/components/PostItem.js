@@ -13,7 +13,7 @@ import {
   downvotePressedFT
 } from '../actions';
 
-const username = 'testUsername';
+//const username = 'testUsername';
 
 class PostItem extends Component {
   constructor(props) {
@@ -96,7 +96,7 @@ class PostItem extends Component {
     }
   }
 
-  checkVoted = () => {
+  checkVoted() {
     const { documentId } = this.props.item;
     const currentUser = firebase.auth().currentUser;
     const postDoc =
@@ -205,24 +205,63 @@ class PostItem extends Component {
   }
 
   renderYourUsername() {
-    const { item } = this.props;
+    const { item, username } = this.props;
     // originally this.props.username, but I'm testing for whether the displayname is funky
     if (username === item.author) {
       return (
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={styles.yourUsernameText}>YOU</Text>
-          <Text style={styles.infoText}>
-            &#9702; {item.location} &#9702; {item.timestamp}
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={styles.yourUsernameText}>You</Text>
+          <Image
+            style={styles.smallDot}
+            source={require('../img/dotSmall.png')}
+          />
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={styles.infoText}>{item.location}</Text>
+            <Image
+              style={styles.smallDot}
+              source={require('../img/dotSmall.png')}
+            />
+            <Text style={styles.infoText}>{item.timestamp}</Text>
+          </View>
         </View>
       );
     }
       return (
-        <Text style={styles.infoText}>
-          {item.author} &#9702; {item.location} &#9702; {item.timestamp}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={styles.infoText}>{item.author}</Text>
+          <Image
+            style={styles.smallDot}
+            source={require('../img/dotSmall.png')}
+          />
+          <Text style={styles.infoText}>{item.location}</Text>
+          <Image
+            style={styles.smallDot}
+            source={require('../img/dotSmall.png')}
+          />
+          <Text style={styles.infoText}>{item.timestamp}</Text>
+        </View>
       );
   }
+  // ---BACKUP--
+  // renderYourUsername() {
+  //   const { item, username } = this.props;
+  //   // originally this.props.username, but I'm testing for whether the displayname is funky
+  //   if (username === item.author) {
+  //     return (
+  //       <View style={{ flexDirection: 'row' }}>
+  //         <Text style={styles.yourUsernameText}>YOU</Text>
+  //         <Text style={styles.infoText}>
+  //           &#9702; {item.location} &#9702; {item.timestamp}
+  //         </Text>
+  //       </View>
+  //     );
+  //   }
+  //     return (
+  //       <Text style={styles.infoText}>
+  //         {item.author} &#9702; {item.location} &#9702; {item.timestamp}
+  //       </Text>
+  //     );
+  // }
 
   render() {
     const { item } = this.props;
@@ -319,11 +358,20 @@ const styles = {
     paddingTop: 2
   },
 
+  smallDot: {
+    width: 4,
+    height: 4,
+    marginTop: 2,
+    marginRight: 7,
+    marginLeft: 7
+  },
+
   yourUsernameText: {
     fontSize: 13,
     fontFamily: 'Avenir-Heavy',
     color: '#FF5353',
-    paddingTop: 2
+    paddingTop: 2,
+    paddingRight: 1
   },
 
   topicText: {
@@ -386,7 +434,7 @@ const styles = {
 
 const mapStateToProps = (state) => {
   return {
-    //username: state.auth.user.displayName
+    username: state.auth.user.displayName,
     authed: state.auth.authenticated
   };
 };

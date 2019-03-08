@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, SectionList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, SectionList } from 'react-native';
 import { connect } from 'react-redux';
 
 import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostItem from '../components/PostItem';
 import SectionHeader from '../components/SectionHeader';
 import NewsHeader from '../components/NewsHeader';
-import { RefreshPosts, LoadPosts } from '../actions';
+import { RefreshPosts, LoadNews, LoadPosts } from '../actions';
 
 class NewsScreen extends Component {
   constructor(props) {
@@ -30,6 +30,7 @@ class NewsScreen extends Component {
     });
 
     this.props.RefreshPosts(); //empties the post_feed action state
+    this.props.LoadNews();
     this.props.LoadPosts();
 
     this.setState({
@@ -98,5 +99,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  RefreshPosts, LoadPosts
+  RefreshPosts, LoadNews, LoadPosts
 })(NewsScreen);

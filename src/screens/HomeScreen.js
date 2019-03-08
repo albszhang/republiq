@@ -7,9 +7,42 @@ import PostModal from '../components/PostModal';
 import PostItem from '../components/PostItem';
 import HeadlineItem from '../components/HeadlineItem';
 import SectionHeader from '../components/SectionHeader';
-import { PostChanged, PostCreate, PostClose, LoadPosts, RefreshPosts } from '../actions';
+import { PostChanged, PostCreate, PostClose, LoadPosts, RefreshPosts, LoadNews } from '../actions';
 
 const Header = () => {
+  const date = new Date();
+  const today = date.getDate();
+  const m = date.getMonth() + 1;
+  let month;
+  if (m === 1) {
+    month = 'JAN';
+  } else if (m === 2) {
+    month = 'FEB';
+  } else if (m === 3) {
+    month = 'MAR';
+  } else if (m === 4) {
+    month = 'APR';
+  } else if (m === 5) {
+    month = 'MAY';
+  } else if (m === 6) {
+    month = 'JUN';
+  } else if (m === 7) {
+    month = 'JUL';
+  } else if (m === 8) {
+    month = 'AUG';
+  } else if (m === 9) {
+    month = 'SEPT';
+  } else if (m === 10) {
+    month = 'OCT';
+  } else if (m === 11) {
+    month = 'NOV';
+  } else if (m === 12) {
+    month = 'DEC';
+  } else if (m === 13) {
+    month = 'JAN';
+  }
+
+  console.log('TESTING DATE', new Date().toISOString());
   return (
     <View style={styles.HeaderContainerStyle}>
       <View style={styles.titleOrg}>
@@ -22,7 +55,7 @@ const Header = () => {
           style={{ width: 32, height: 32 }}
           source={require('../img/sun.png')}
         />
-        <Text style={styles.dateStyle}>DATE</Text>
+        <Text style={styles.dateStyle}>{month} {today}</Text>
       </View>
     </View>
   );
@@ -37,7 +70,7 @@ class HomeScreen extends Component {
       refresh: false,
       loading: false,
 
-      news_feed: [
+      static_newsFeed: [
         {
           order: '1.',
           headline: 'U.S. Government Shutdown'
@@ -82,6 +115,7 @@ class HomeScreen extends Component {
     });
 
     this.props.RefreshPosts(); //empties the post_feed action state
+    this.props.LoadNews();
     this.props.LoadPosts();
 
     this.setState({
@@ -117,14 +151,20 @@ class HomeScreen extends Component {
               onRefresh={this.loadNew}
               sections={[
                 { title: 'HEADLINES',
-                  data: this.state.news_feed,
+                  //data: this.state.static_newsFeed,
+                  data: this.props.news_feed,
                   renderItem: ({ item, index }) => (
-                    <HeadlineItem index={index} item={item} navigation={this.props.navigation} />
+                    <HeadlineItem
+                      index={index}
+                      item={item}
+                      navigation={this.props.navigation}
+                      loading={this.state.loading}
+                    />
                   )
                 },
                 { title: 'DISCUSSION', data: this.props.post_feed }
               ]}
-              renderItem={({ item, index, section }) => (
+              renderItem={({ item, index }) => (
                 <PostItem index={index} item={item} navigation={this.props.navigation} />
               )}
               renderSectionHeader={({ section }) => (
@@ -176,11 +216,9 @@ class HomeScreen extends Component {
 }
 
 const styles = {
-
   container: {
     flex: 1,
     backgroundColor: '#F6F6F6',
-
   },
 
   button: {
@@ -243,10 +281,12 @@ const styles = {
 
 const mapStateToProps = (state) => {
   //console.log(state.auth.user.displayName);
+  //console.log('CHECKINGFORDISPLAYNAME', state.auth.user.displayName);
   return {
     post: state.post.PostText,
     post_feed: state.feed.post_feed,
-    //username: state.auth.user.displayName
+    news_feed: state.feed.news_feed,
+    username: state.auth.user.displayName
   };
 };
 
@@ -255,6 +295,7 @@ export default connect(mapStateToProps, {
   PostCreate,
   PostClose,
   RefreshPosts,
-  LoadPosts
+  LoadPosts,
+  LoadNews
 })(HomeScreen);
 //export default HomeScreen;

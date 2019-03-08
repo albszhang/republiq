@@ -19,6 +19,7 @@ import {
   UPVOTE_PRESSED,
   DOWNVOTE_PRESSED,
   LOAD_POSTS,
+  LOAD_NEWS,
   REFRESH_POSTS
 } from './types';
 
@@ -38,10 +39,10 @@ export const notInitialized = () => {
 
 //Authentication ---------
 
-export const isAuthenticated = () => {
+export const isAuthenticated = (user) => {
   return {
     type: IS_AUTHENTICATED,
-    payload: true
+    payload: user
   };
 };
 
@@ -118,6 +119,32 @@ export const authUserFail = (dispatch) => {
 //Gettting basic user info  ---------
 
 //Loading the homepage feed -----------
+export const LoadNews = () => {
+ return (dispatch) => {
+   firebase.firestore().collection('news').doc('2019-03-08').collection('headlines')
+    .orderBy('ranking', 'asc')
+    .get()
+    .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        if (doc.exists) {
+          console.log('NEWS DATA', doc.data());
+          const postObj = doc.data();
+          dispatch({
+            type: LOAD_NEWS,
+            payload: {
+              title: postObj.title,
+              ranking: postObj.ranking,
+              heat: postObj.heat,
+              nOfArticles: postObj.nOfArticles,
+              nOfComments: postObj.nOfComments
+            }
+          });
+        }
+      });
+   });
+ };
+};
+
 export const LoadPosts = () => {
   return (dispatch) => {
     pluralCheck = (s) => {
@@ -204,6 +231,7 @@ export const PostChanged = (text) => {
 
 export const PostCreate = ({ post, username }) => {
   const uuid = require('uuid');
+
   const posts = firebase.firestore().collection('posts');
   const currentUser = firebase.auth().currentUser;
   return (dispatch) => {

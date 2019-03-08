@@ -16,21 +16,20 @@ const INITIAL_STATE = {
   authenticated: false,
   email: '',
   password: '',
-  user: null,
+  user: [],
   username: '',
   error: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
-  //console.log(action);
-
   switch (action.type) {
     case IS_INITIALIZED:
       return { ...state, initialized: true };
     case NOT_INITIALIZED:
       return { ...state, initialized: false };
     case IS_AUTHENTICATED:
-      return { ...state, authenticated: action.payload };
+      //console.log('ISAUNTHETICATED USER', action.payload);
+      return { ...state, user: action.payload };
     case NOT_AUTHENTICATED:
       return { ...state, authenticated: action.payload };
     case SIGNUP_USER_SUCCESS:

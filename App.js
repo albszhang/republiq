@@ -6,10 +6,8 @@ import firebase from 'firebase';
 //import 'firebase/firestore';
 import ReduxThunk from 'redux-thunk';
 
-import { isAuthenticated, notAuthenticated, isInitialized } from './src/actions';
 import reducers from './src/reducers';
 import { Router } from './src/Router';
-import LoadingScreen from './src/screens/LoadingScreen';
 
 let firebaseAppDefined = false;
 
@@ -40,8 +38,6 @@ class App extends Component {
   render() {
     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
     this.interval();
-    // return firebaseAppDefined ? <Router auth={this.props.authenticated} /> :
-    //   <LoadingScreen />;
     return (
       <Provider store={store}>
         <Router />
@@ -49,27 +45,5 @@ class App extends Component {
     );
   }
 }
-//
-// const mapStateToProps = (state) => {
-//   console.log('app.js state of auth ->', state.auth.authenticated);
-//   return {
-//     initialized: state.auth.initialized,
-//     authenticated: state.auth.authenticated
-//   };
-// };
-//
-// const ConnectedApp =
-//   connect(mapStateToProps, {
-//     isInitialized, isAuthenticated, notAuthenticated
-//   })(CheckApp);
-//
-// const App = () => {
-//     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));
-//     return (
-//       <Provider store={store}>
-//         <ConnectedApp />
-//       </Provider>
-//     );
-// };
 
 export default App;

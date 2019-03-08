@@ -140,7 +140,7 @@ class NewsHeader extends Component {
           </TouchableOpacity>
 
         {/* Title Section */}
-          <View style={{ paddingLeft: 20 }}>
+          <View style={{ paddingLeft: 20, paddingRight: 20 }}>
             {/* Headline Title */}
             <View style={{ paddingTop: 20 }}>
               <Text style={styles.headlineTextStyle}>1. Elizabeth Warren Presidential Bid</Text>
