@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, FlatList, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, Dimensions } from 'react-native';
 import { withNavigation } from 'react-navigation';
-//import Pagination, { Icon, Dot } from 'react-native-pagination';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import HeadlineInfo from './HeadlineInfo';
@@ -49,6 +48,12 @@ class NewsHeader extends Component {
     };
   }
 
+  openLink() {
+    Linking.openURL(
+      'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
+    ).catch((err) => console.error('An error occurred', err));
+  }
+
   get pagination() {
         const { activeSlide } = this.state;
         return (
@@ -87,7 +92,6 @@ class NewsHeader extends Component {
         );
     }
   renderItem({ item, index }) {
-    //const { item } = this.props;
     return (
       <TouchableOpacity
         style={{
@@ -95,6 +99,11 @@ class NewsHeader extends Component {
           paddingBottom: 13,
           paddingLeft: 20,
           width: Dimensions.get('window').width,
+        }}
+        onPress={() => {
+          Linking.openURL(
+            'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
+          ).catch((err) => console.error('An error occurred', err));
         }}
       >
         {/* Article Info */}
@@ -124,6 +133,12 @@ class NewsHeader extends Component {
   }
   render() {
     //const { navigation } = this.props;
+    const title = this.props.navigation.getParam('title');
+    const ranking = this.props.navigation.getParam('ranking');
+    const heat = this.props.navigation.getParam('heat');
+    const nOfArticles = this.props.navigation.getParam('nOfArticles');
+    const nOfComments = this.props.navigation.getParam('nOfComments');
+    console.log('navprops in newsheader success?', nOfArticles);
     return (
       <View style={styles.headerContainerStyle}>
         {/* <View style={{ paddingLeft: 20, }}>*/}
@@ -143,10 +158,14 @@ class NewsHeader extends Component {
           <View style={{ paddingLeft: 20, paddingRight: 20 }}>
             {/* Headline Title */}
             <View style={{ paddingTop: 20 }}>
-              <Text style={styles.headlineTextStyle}>1. Elizabeth Warren Presidential Bid</Text>
+              <Text style={styles.headlineTextStyle}>{ranking}. {title}</Text>
             </View>
             {/* Information Section */}
-            <HeadlineInfo />
+            <HeadlineInfo
+              heat={heat}
+              nOfArticles={nOfArticles}
+              nOfComments={nOfComments}
+            />
 
             <Image
               style={{
@@ -159,25 +178,6 @@ class NewsHeader extends Component {
               source={require('../img/headlineElements/divider.png')}
             />
           </View>
-          {/* Article Section */}
-
-          {/* <FlatList
-              data={tempData}
-              renderItem={(item) => this.renderItem(item)}
-              keyExtractor={(item, index) => item.id}
-              horizontal
-              decelerationRate={0}
-              snapToInterval={Dimensions.get('window').width}
-              snapToAlignment={'center'}
-              onViewableItemsChanged={this.viewableItemsCheck}
-          />
-
-          <Pagination
-            paginationVisibleItems={this.state.viewableItems}
-            paginationItems={tempData}
-            paginationItemPadSize={3}
-            horizontal
-          />*/}
 
           <Carousel
             ref={(c) => { this._carousel = c; }}

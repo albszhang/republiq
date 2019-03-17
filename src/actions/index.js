@@ -79,7 +79,7 @@ export const loginUser = ({ email, password, navigation }) => {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(() => {
         //navigation.navigate('App');
-        console.log(firebase.auth().currentUser);
+        //console.log(firebase.auth().currentUser);
         dispatch({ type: LOGIN_USER_SUCCESS, payload: firebase.auth().currentUser });
       })
       .catch(() => authUserFail(dispatch));
@@ -96,7 +96,7 @@ export const signupUser = ({ email, password, username, navigation }) => {
       })
       .then(() => {
         const currentUser = firebase.auth().currentUser;
-        console.log('test');
+        //console.log('test');
         firebase.firestore().collection('users').doc(currentUser.uid).set({
           uid: currentUser.uid,
           username,
@@ -127,7 +127,7 @@ export const LoadNews = () => {
     .then((snapshot) => {
       snapshot.docs.forEach(doc => {
         if (doc.exists) {
-          console.log('NEWS DATA', doc.data());
+          //console.log('NEWS DATA', doc.data());
           const postObj = doc.data();
           dispatch({
             type: LOAD_NEWS,
@@ -188,7 +188,7 @@ export const LoadPosts = () => {
     firebase.firestore().collection('posts').get().then((snapshot) => {
       snapshot.docs.forEach(doc => {
         if (doc.exists) {
-          console.log(doc.data());
+          //console.log(doc.data());
 
           const postObj = doc.data();
           //const postFeed = that.state.post_feed;

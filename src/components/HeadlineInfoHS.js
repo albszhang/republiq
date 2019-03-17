@@ -3,7 +3,6 @@ import { View, Text, Image, } from 'react-native';
 
 let heatColor = '#AEAEAE';
 let heatWord = 'Loading';
-let heatImg = '../img/headlineElements/fire/default.png';
 
 class HeadlineInfoHS extends Component {
   heatColorDecide() {

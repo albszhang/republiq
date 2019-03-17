@@ -7,15 +7,15 @@ let heatColor = '#404040';
 
 class HeadlineItem extends Component {
   heatColorDecide() {
-    console.log('is there heat here?', this.props.item.heat);
+  //  console.log('is there heat here?', this.props.item.heat);
     if (this.props.item.heat === '1') {
-      console.log('HEATHEAT', this.props.item.heat);
+    //  console.log('HEATHEAT', this.props.item.heat);
       heatColor = '#FF5353';
     } else if (this.props.item.heat === '0') {
       heatColor = '#FFB053';
     } else if (this.props.item.heat === '-1') {
       heatColor = '#EFD02D';
-    } 
+    }
   }
   render() {
     const { index, item, navigation } = this.props;
@@ -24,7 +24,15 @@ class HeadlineItem extends Component {
       <View style={{ backgroundColor: 'white' }} key={index}>
         <TouchableOpacity
           style={styles.headlineContainerStyle}
-          onPress={() => { navigation.navigate('News'); }}
+          onPress={() => {
+            navigation.navigate('News', {
+              title: item.title,
+              ranking: item.ranking,
+              heat: item.heat,
+              nOfArticles: item.nOfArticles,
+              nOfComments: item.nOfComments
+          });
+        }}
         >
           <View style={styles.innerStyle}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>

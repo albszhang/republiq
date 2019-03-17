@@ -44,6 +44,10 @@ class NewsScreen extends Component {
     this.loadFeed();
   }
 
+  navProps(prop) {
+    this.props.navigaton.getParam(prop);
+  }
+
   renderHead() {
     return <NewsHeader nav={this.props.navigation} />;
   }
