@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Republiq",
-    "slug": "Republiq",
+    "slug": "expo.io/@albszhang/Republiq",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": [
@@ -23,6 +23,7 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.republic.republiq",
       "supportsTablet": true
     }
   }

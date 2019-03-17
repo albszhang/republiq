@@ -1,9 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 23631,
-  "expoServerNgrokUrl": "https://nc-r6i.anonymous.republiq.exp.direct",
-  "packagerNgrokUrl": "https://packager.nc-r6i.anonymous.republiq.exp.direct",
-  "ngrokPid": 23647
+  "expoServerPort": null,
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
+  "webpackServerPort": null
 }
