@@ -1,12 +1,14 @@
 import {
   LOAD_NEWS,
   LOAD_POSTS,
+  LOAD_HEADLINES,
   REFRESH_POSTS
 } from '../actions/types';
 
 const INITIAL_STATE = {
   post_feed: [],
   news_feed: [],
+  headlines: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -21,8 +23,14 @@ export default (state = INITIAL_STATE, action) => {
         ...state,
         post_feed: [...state.post_feed, action.payload]
       };
-      case REFRESH_POSTS:
-        return INITIAL_STATE;
+    case LOAD_HEADLINES:
+      console.log('Reducer', action.payload);
+      return {
+        ...state,
+        headlines: [...state.headlines, action.payload]
+      };
+    case REFRESH_POSTS:
+      return INITIAL_STATE;
     default:
       return state;
   }

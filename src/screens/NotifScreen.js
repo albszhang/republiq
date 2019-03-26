@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, InputAccessoryView, Button } from 'react-native';
 import firebase from 'firebase';
 import 'firebase/firestore';
 
@@ -18,7 +18,9 @@ class NotifScreen extends Component {
       id: uuidv4(),
       msg: true,
       success: false,
-      error: false
+      error: false,
+
+      text: ''
     };
   }
 
@@ -110,6 +112,27 @@ class NotifScreen extends Component {
   }
 
   render() {
+    const inputAccessoryViewID = 'inputAccessoryView1';
+   // return (
+   //   <View>
+   //      <View style={styles.inputTestContainerStyle}>
+   //         <TextInput
+   //           style={styles.inputTestStyle}
+   //           inputAccessoryViewID={inputAccessoryViewID}
+   //           onChangeText={(text) => this.setState({ text })}
+   //           value={this.state.text}
+   //         />
+   //      </View>
+   //     <InputAccessoryView nativeID={inputAccessoryViewID}>
+   //       <View style={{ backgroundColor: 'red' }}>
+   //         <Button
+   //           onPress={() => this.setState({ text: 'Placeholder Text' })}
+   //           title="Reset Text"
+   //         />
+   //       </View>
+   //     </InputAccessoryView>
+   //   </View>
+   // );
     return (
       <View style={styles.container}>
         <View style={styles.inputContainerStyle}>
@@ -187,6 +210,25 @@ const styles = {
     paddingBottom: 25,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  inputTestContainerStyle: {
+    flex: 1,
+    height: 150,
+    paddingTop: 25,
+    paddingBottom: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  inputTestStyle: {
+    flex: 2,
+    height: 500,
+    color: '#4D4D4D',
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    fontSize: 18,
+    fontFamily: 'Avenir-Book',
+    backgroundColor: '#ECECEC'
   },
   inputStyle: {
     flex: 2,

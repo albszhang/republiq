@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Alert, Image, Text, SectionList } from 'react-native';
+import {
+  View, TouchableOpacity, Alert, Image, Text, SectionList
+} from 'react-native';
 import { connect } from 'react-redux';
+import { ifIphoneX } from 'react-native-iphone-x-helper';
 
 import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostModal from '../components/PostModal';
 import PostItem from '../components/PostItem';
 import HeadlineItem from '../components/HeadlineItem';
 import SectionHeader from '../components/SectionHeader';
-import { PostChanged, PostCreate, PostClose, LoadPosts, RefreshPosts, LoadNews } from '../actions';
+import {
+  PostChanged, PostCreate, PostClose, LoadPosts, RefreshPosts, LoadNews, LoadHeadlines
+} from '../actions';
 
 const Header = () => {
   const date = new Date();
@@ -42,7 +47,7 @@ const Header = () => {
     month = 'JAN';
   }
 
-  console.log('TESTING DATE', new Date().toISOString());
+  //console.log('TESTING DATE', new Date().toISOString());
   return (
     <View style={styles.HeaderContainerStyle}>
       <View style={styles.titleOrg}>
@@ -92,6 +97,7 @@ class HomeScreen extends Component {
           headline: 'Trump Cabinet Meeting'
         },
       ],
+      postActionNewsFeed: this.props.news_feed
     };
   }
 
@@ -117,6 +123,7 @@ class HomeScreen extends Component {
     this.props.RefreshPosts(); //empties the post_feed action state
     this.props.LoadNews();
     this.props.LoadPosts();
+    this.props.LoadHeadlines();
 
     this.setState({
       refresh: false,
@@ -193,6 +200,7 @@ class HomeScreen extends Component {
             const { post, username } = this.props;
             this.props.PostCreate({ post, username });
           }}
+          headlineItems={this.state.postActionNewsFeed}
         />
 
         {/* Button to Post */}
@@ -200,6 +208,7 @@ class HomeScreen extends Component {
           <TouchableOpacity
             onPress={() => {
               this.setModalVisible(true);
+              this.setState({ postActionNewsFeed: this.props.news_feed });
             }}
             style={styles.button}
           >
@@ -236,11 +245,17 @@ const styles = {
 
   HeaderContainerStyle: {
     backgroundColor: '#FFF',
-    height: 105,
-    paddingTop: 40,
+    //height: 105,
+    //paddingTop: 40,
+    paddingBottom: 10,
     position: 'relative',
     justifyContent: 'space-between',
     flexDirection: 'row',
+    ...ifIphoneX({
+        paddingTop: 60,
+    }, {
+        paddingTop: 40
+    })
   },
 
   RepubliqTitle: {
@@ -280,7 +295,7 @@ const styles = {
 };
 
 const mapStateToProps = (state) => {
-  //console.log(state.auth.user.displayName);
+  console.log('news titles?', state.feed.news_feed);
   //console.log('CHECKINGFORDISPLAYNAME', state.auth.user.displayName);
   return {
     post: state.post.PostText,
@@ -296,6 +311,7 @@ export default connect(mapStateToProps, {
   PostClose,
   RefreshPosts,
   LoadPosts,
+  LoadHeadlines,
   LoadNews
 })(HomeScreen);
 //export default HomeScreen;

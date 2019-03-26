@@ -216,11 +216,11 @@ class PostItem extends Component {
             source={require('../img/dotSmall.png')}
           />
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={styles.infoText}>{item.location}</Text>
+          {/*  <Text style={styles.infoText}>{item.location}</Text>
             <Image
               style={styles.smallDot}
               source={require('../img/dotSmall.png')}
-            />
+            /> */}
             <Text style={styles.infoText}>{item.timestamp}</Text>
           </View>
         </View>
@@ -233,11 +233,12 @@ class PostItem extends Component {
             style={styles.smallDot}
             source={require('../img/dotSmall.png')}
           />
-          <Text style={styles.infoText}>{item.location}</Text>
+          {/* <Text style={styles.infoText}>{item.location}</Text>
           <Image
             style={styles.smallDot}
             source={require('../img/dotSmall.png')}
           />
+          */}
           <Text style={styles.infoText}>{item.timestamp}</Text>
         </View>
       );
@@ -345,7 +346,7 @@ const styles = {
   },
 
   bodyText: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: 'Avenir-Roman',
     color: '#171717',
     paddingTop: 7

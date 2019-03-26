@@ -20,6 +20,7 @@ import {
   DOWNVOTE_PRESSED,
   LOAD_POSTS,
   LOAD_NEWS,
+  LOAD_HEADLINES,
   REFRESH_POSTS
 } from './types';
 
@@ -138,6 +139,26 @@ export const LoadNews = () => {
               nOfArticles: postObj.nOfArticles,
               nOfComments: postObj.nOfComments
             }
+          });
+        }
+      });
+   });
+ };
+};
+
+export const LoadHeadlines = () => {
+ return (dispatch) => {
+   firebase.firestore().collection('news').doc('2019-03-08').collection('headlines')
+    .orderBy('ranking', 'asc')
+    .get()
+    .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        if (doc.exists) {
+          //console.log('NEWS DATA', doc.data());
+          const postObj = doc.data();
+          dispatch({
+            type: LOAD_HEADLINES,
+            payload: postObj.title
           });
         }
       });
