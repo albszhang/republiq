@@ -5,6 +5,7 @@ import { ifIphoneX } from 'react-native-iphone-x-helper';
 import ModalDropdown from 'react-native-modal-dropdown';
 
 import CreatePost from './post';
+import { PostHeadlineSelected } from '../actions';
 
 let postColor = '#C9C9C9';
 let fontSize = 16;
@@ -19,6 +20,7 @@ class PostModal extends Component {
 
     this.state = {
       headlineSelected: false,
+      selectedHeadline: 'Error',
     };
   }
 
@@ -29,7 +31,7 @@ class PostModal extends Component {
   postColor() {
     if (this.state.headlineSelected) {
       postColor = '#FF5353';
-      fontSize = 14;
+      fontSize = 15;
       fontFamily = 'Avenir-Heavy';
       color = '#404040';
       paddingRight = 7;
@@ -38,6 +40,37 @@ class PostModal extends Component {
 
   selectHeadlineTouch() {
     this.setState({ headlineSelected: true });
+  }
+
+  renderPostButton() {
+    if (this.state.headlineSelected) {
+      return (
+        <View style={{ paddingRight: 18 }}>
+          <TouchableOpacity
+            onPress={this.props.postAction}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: 'Avenir-Black',
+                color: postColor
+              }}
+            >POST</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+      return (
+        <View style={{ paddingRight: 18 }}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: 'Avenir-Black',
+              color: postColor
+            }}
+          >POST</Text>
+        </View>
+      );
   }
 
   render() {
@@ -64,7 +97,7 @@ class PostModal extends Component {
                 <Text style={styles.cancelTextStyle}>Cancel</Text>
               </TouchableOpacity>
             </View>
-            {/* PostButton */}
+            {/* PostButton
             <View style={{ paddingRight: 18 }}>
               <TouchableOpacity
                 onPress={postAction}
@@ -78,6 +111,8 @@ class PostModal extends Component {
                 >POST</Text>
               </TouchableOpacity>
             </View>
+            */}
+            {this.renderPostButton()}
           </View>
 
           <View style={styles.secondHeaderContainer}>
@@ -109,32 +144,14 @@ class PostModal extends Component {
                   })
                 })}
                 keyboardShouldPersistTaps={'always'}
-                onSelect={() => {
+                onSelect={(index, value) => {
+                  this.props.PostHeadlineSelected(value);
                   this.setState({ headlineSelected: true });
-                  console.log('TESTHEADLINE', headlines.shift().title);
                 }}
               />
-              {/*
-                <TouchableOpacity
-                  style={{ flexDirection: 'row', alignItems: 'center' }}
-                  onPress={() => { this.setState({ headlineSelected: true }); }}
-                >
-                  <Text style={styles.selectHeadlineTextStyle}>SELECT A HEADLINE</Text>
-                  <Image
-                    style={{ width: 12, height: 10, bottom: 2 }}
-                    source={require('../img/selectHeadlineTriangle.png')}
-                  />
-                </TouchableOpacity>
-                */}
-
             </View>
           </View>
         </View>
-
-        {/* Typing Area  <View style={styles.container}>
-            <CreatePost />
-          </View>
- */}
       <CreatePost />
 
       </Modal>
@@ -210,11 +227,13 @@ const styles = {
 };
 
 const mapStateToProps = state => {
+  //console.log('from postModal', state.post.selectedHeadline);
   return {
     post: state.post.PostText,
+    //selectedHeadline: state.post.selectedHeadline,
     news_feed: state.feed.news_feed,
     headlines: state.feed.headlines
   };
 };
 
-export default connect(mapStateToProps)(PostModal);
+export default connect(mapStateToProps, { PostHeadlineSelected })(PostModal);

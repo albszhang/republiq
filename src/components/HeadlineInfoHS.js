@@ -4,6 +4,8 @@ import { View, Text, Image, } from 'react-native';
 let heatColor = '#AEAEAE';
 let heatWord = 'Loading';
 
+//HeadlineInfoHS is part of HeadlineItem, which is shown on the homepage
+
 class HeadlineInfoHS extends Component {
   heatColorDecide() {
     if (this.props.heat === '1') {

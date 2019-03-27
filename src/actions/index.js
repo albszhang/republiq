@@ -15,6 +15,7 @@ import {
   AUTH_USER_FAIL,
   POST_TEXT_CHANGED,
   POST_CREATED,
+  HEADLINE_SELECTED,
   POST_CLOSED,
   UPVOTE_PRESSED,
   DOWNVOTE_PRESSED,
@@ -122,7 +123,7 @@ export const authUserFail = (dispatch) => {
 //Loading the homepage feed -----------
 export const LoadNews = () => {
  return (dispatch) => {
-   firebase.firestore().collection('news').doc('2019-03-08').collection('headlines')
+   firebase.firestore().collection('currentHeadlines')
     .orderBy('ranking', 'asc')
     .get()
     .then((snapshot) => {
@@ -148,13 +149,13 @@ export const LoadNews = () => {
 
 export const LoadHeadlines = () => {
  return (dispatch) => {
-   firebase.firestore().collection('news').doc('2019-03-08').collection('headlines')
+   firebase.firestore().collection('currentHeadlines')
     .orderBy('ranking', 'asc')
     .get()
     .then((snapshot) => {
       snapshot.docs.forEach(doc => {
         if (doc.exists) {
-          //console.log('NEWS DATA', doc.data());
+          console.log('NEWS DATA', doc.data());
           const postObj = doc.data();
           dispatch({
             type: LOAD_HEADLINES,
@@ -181,32 +182,40 @@ export const LoadPosts = () => {
 
       let interval = Math.floor(seconds / 31536000);
 
-      if (interval > 1) {
-        return interval + ' year' + this.pluralCheck(interval);
+      if (interval >= 1) {
+        return `${interval} year${this.pluralCheck(interval)}`;
       }
       interval = Math.floor(seconds / 2592000);
-      if (interval > 1) {
-        return interval + ' month' + this.pluralCheck(interval);
+      if (interval >= 1) {
+        return `${interval} month${this.pluralCheck(interval)}`;
       }
+      // ----IF YOU WANT WEEKS----
+      // interval = Math.floor(seconds / 604800);
+      // if (interval >= 1) {
+      //   return `${interval} week${this.pluralCheck(interval)}`;
+      // }
       interval = Math.floor(seconds / 86400);
-      if (interval > 1) {
-        return interval + ' day' + this.pluralCheck(interval);
+      if (interval >= 1) {
+        return `${interval} day${this.pluralCheck(interval)}`;
       }
       interval = Math.floor(seconds / 3600);
-      if (interval > 1) {
-        return interval + ' hr' + this.pluralCheck(interval);
+      if (interval >= 1) {
+        return `${interval} hr${this.pluralCheck(interval)}`;
       }
       interval = Math.floor(seconds / 60);
-      if (interval > 1) {
-        return interval + ' min' + this.pluralCheck(interval);
+      if (interval >= 1) {
+        return `${interval} min${this.pluralCheck(interval)}`;
       }
-      return Math.floor(seconds) + ' second' + this.pluralCheck(interval);
+      return `${Math.floor(seconds)} second${this.pluralCheck(interval)}`;
     };
 
     const that = this;
 
     //getting data
-    firebase.firestore().collection('posts').get().then((snapshot) => {
+    firebase.firestore().collection('posts')
+      .orderBy('timestamp', 'desc')
+      .get()
+      .then((snapshot) => {
       snapshot.docs.forEach(doc => {
         if (doc.exists) {
           //console.log(doc.data());
@@ -250,9 +259,9 @@ export const PostChanged = (text) => {
   };
 };
 
-export const PostCreate = ({ post, username }) => {
+export const PostCreate = ({ post, username, selectedHeadline }) => {
   const uuid = require('uuid');
-
+  //console.log('testing for headlineSelect', selectedHeadline);
   const posts = firebase.firestore().collection('posts');
   const currentUser = firebase.auth().currentUser;
   return (dispatch) => {
@@ -266,7 +275,7 @@ export const PostCreate = ({ post, username }) => {
       upvotes: 1,
       downvotes: 0,
       nOfComments: 0,
-      topic: 'Test Topic',
+      topic: selectedHeadline,
     })
     .then((docRef) => {
         posts.doc(`${docRef.id}`).collection('scoreStatus').doc(`${currentUser.uid}`).set({
@@ -277,6 +286,13 @@ export const PostCreate = ({ post, username }) => {
       .catch((console.log('something went wrong')));
     })
     .then(dispatch({ type: POST_CREATED }));
+  };
+};
+
+export const PostHeadlineSelected = (headlineValue) => {
+  return {
+    type: HEADLINE_SELECTED,
+    payload: headlineValue
   };
 };
 

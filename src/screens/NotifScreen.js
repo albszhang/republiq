@@ -16,6 +16,7 @@ class NotifScreen extends Component {
       nOfComments: '',
       nOfArticles: '',
       id: uuidv4(),
+      dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
       msg: true,
       success: false,
       error: false,
@@ -26,7 +27,8 @@ class NotifScreen extends Component {
 
   onButtonPress() {
     //const news = firebase.firestore().collection('news');
-    firebase.firestore().collection('news').doc('2019-03-08').collection('headlines')
+    // firebase.firestore().collection('news').doc('2019-03-08').collection('headlines')
+    firebase.firestore().collection('currentHeadlines')
     .doc(`${this.state.title}`)
       .set({
         title: this.state.title,
@@ -34,7 +36,8 @@ class NotifScreen extends Component {
         heat: this.state.heat,
         nOfComments: this.state.nOfComments,
         nOfArticles: this.state.nOfArticles,
-        id: this.state.id
+        id: this.state.id,
+        dateCreated: this.state.dateCreated
       })
       .then(this.setState({
         title: '',
@@ -43,6 +46,7 @@ class NotifScreen extends Component {
         nOfComments: '',
         nOfArticles: '',
         id: uuidv4(),
+        dateCreated: this.state.dateCreated,
         msg: true,
         success: true,
         error: false,
@@ -54,23 +58,13 @@ class NotifScreen extends Component {
       nOfComments: '',
       nOfArticles: '',
       id: uuidv4(),
+      dateCreated: this.state.dateCreated,
       msg: true,
       success: true,
       error: false
     }));
   }
-  // const withTernary = ({
-  //   conditionA, conditionB
-  // }) => (
-  //   (!conditionA) ? valueC
-  //     : (conditionB)
-  //     ? valueA
-  //     : valueB
-  // );
-  //this is complicated but im strapped 4 time, homie. it means
-  // if there isn't a message, return an empty view tag
-  // if there IS a message, then return another if statement,
-    // where if sucess is true, return success, and if it isn't, return an error
+
   buttonResponse() {
     return (
       <View>
@@ -113,26 +107,6 @@ class NotifScreen extends Component {
 
   render() {
     const inputAccessoryViewID = 'inputAccessoryView1';
-   // return (
-   //   <View>
-   //      <View style={styles.inputTestContainerStyle}>
-   //         <TextInput
-   //           style={styles.inputTestStyle}
-   //           inputAccessoryViewID={inputAccessoryViewID}
-   //           onChangeText={(text) => this.setState({ text })}
-   //           value={this.state.text}
-   //         />
-   //      </View>
-   //     <InputAccessoryView nativeID={inputAccessoryViewID}>
-   //       <View style={{ backgroundColor: 'red' }}>
-   //         <Button
-   //           onPress={() => this.setState({ text: 'Placeholder Text' })}
-   //           title="Reset Text"
-   //         />
-   //       </View>
-   //     </InputAccessoryView>
-   //   </View>
-   // );
     return (
       <View style={styles.container}>
         <View style={styles.inputContainerStyle}>

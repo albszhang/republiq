@@ -10,6 +10,7 @@ export const LOGIN_USER_SUCCESS = 'login_user_success';
 export const SIGNUP_USER_SUCCESS = 'signup_user_sucess';
 export const AUTH_USER_FAIL = 'auth_user_fail';
 export const POST_CREATED = 'post_created';
+export const HEADLINE_SELECTED = 'headline_selected';
 export const POST_CLOSED = 'post_closed';
 export const UPVOTE_PRESSED = 'upvote_pressed';
 export const DOWNVOTE_PRESSED = 'downvote_pressed';

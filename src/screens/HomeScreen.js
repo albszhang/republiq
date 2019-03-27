@@ -197,8 +197,9 @@ class HomeScreen extends Component {
           }}
           postAction={() => {
             this.setModalVisible(!this.state.modalVisible);
-            const { post, username } = this.props;
-            this.props.PostCreate({ post, username });
+            console.log('postaction', this.props.selectedHeadline);
+            const { post, username, selectedHeadline } = this.props;
+            this.props.PostCreate({ post, username, selectedHeadline });
           }}
           headlineItems={this.state.postActionNewsFeed}
         />
@@ -295,10 +296,10 @@ const styles = {
 };
 
 const mapStateToProps = (state) => {
-  console.log('news titles?', state.feed.news_feed);
-  //console.log('CHECKINGFORDISPLAYNAME', state.auth.user.displayName);
+  //console.log('from HomeScreen', state.post.selectedHeadline);
   return {
     post: state.post.PostText,
+    selectedHeadline: state.post.selectedHeadline,
     post_feed: state.feed.post_feed,
     news_feed: state.feed.news_feed,
     username: state.auth.user.displayName

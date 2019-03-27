@@ -1,42 +1,44 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, Linking, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, Dimensions, WebView } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
+//import SafariView from 'react-native-safari-view';
 
 import HeadlineInfo from './HeadlineInfo';
 
 const tempData = [
   {
-    id: 1,
-    index: 1,
+    id: 23452345,
+    //index: 1,
     img: 'nytimes.png',
     time: '3 hours ago',
     url: 'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html',
     headline: 'Elizabeth Warren Announces Iowa Trip as She Starts Running for President in 2020'
   },
   {
-    id: 2,
-    index: 2,
+    id: 5280326,
+    //index: 2,
     img: 'nytimes.png',
     time: '3 hours ago',
-    url: 'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html',
-    headline: 'Elizabeth Warren Announces Iowa Trip as She Starts Running for President in 2020'
+    url: 'https://deadline.com/2019/03/elizabeth-warren-stephen-colbert-bill-barr-robert-mueller-report-donald-trump-video-1202582517/',
+    headline:
+    'Elizabeth Warren Tells Stephen Colbert She Does Not Trust Barr’s Mueller Report Recap'
   },
   {
     id: 3,
-    index: 3,
+    //index: 3,
     img: 'nytimes.png',
     time: '3 hours ago',
-    url: 'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html',
-    headline: 'Elizabeth Warren Announces Iowa Trip as She Starts Running for President in 2020'
+    url: 'https://thehill.com/homenews/campaign/435768-elizabeth-warren-after-tmz-catches-her-sprinting-to-catch-train-try-and',
+    headline: 'Elizabeth Warren after TMZ catches her sprinting to catch train: Try and Keep Up'
   },
   {
-    id: 4,
-    index: 4,
+    id: 10,
+    //index: -10,
     img: 'nytimes.png',
     time: '3 hours ago',
     url: 'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html',
-    headline: 'Elizabeth Warren Announces Iowa Trip as She Starts Running for President in 2020'
+    headline: 'testytest'
   },
 ];
 
@@ -52,6 +54,15 @@ class NewsHeader extends Component {
     Linking.openURL(
       'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
     ).catch((err) => console.error('An error occurred', err));
+    // SafariView.isAvailable()
+    //  .then(SafariView.show({
+    //    url: 'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
+    //  }))
+    //  .catch(() => {
+    //    Linking.openURL(
+    //      'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
+    //    ).catch((err) => console.error('An error occurred', err));
+    //  });
   }
 
   get pagination() {
@@ -91,6 +102,7 @@ class NewsHeader extends Component {
             />
         );
     }
+
   renderItem({ item, index }) {
     return (
       <TouchableOpacity
@@ -101,9 +113,8 @@ class NewsHeader extends Component {
           width: Dimensions.get('window').width,
         }}
         onPress={() => {
-          Linking.openURL(
-            'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
-          ).catch((err) => console.error('An error occurred', err));
+          Linking.openURL(item.url)
+          .catch((err) => console.error('An error occurred', err));
         }}
       >
         {/* Article Info */}
@@ -111,7 +122,7 @@ class NewsHeader extends Component {
           <View style={{ paddingRight: 8 }}>
             <Image
               style={{ width: 22.7, height: 25.3 }}
-              source={require('../img/newsIcons/nytimes.png')}
+              source={{uri: 'https://firebasestorage.googleapis.com/v0/b/republiq-3a89c.appspot.com/o/newsIcons%2Fnytimes.png?alt=media&token=838be42d-e2ff-45ad-be73-b7decbcb3913'}}
             />
           </View>
           <View style={{ paddingRight: 8 }}>
@@ -125,7 +136,7 @@ class NewsHeader extends Component {
         {/* Article Text */}
         <View style={{ paddingTop: 3, paddingRight: 24 }}>
           <Text style={styles.articleTextStyle}>
-            Elizabeth Warren Announces Iowa Trip as She Starts Running for President in 2020
+        {item.headline}
           </Text>
         </View>
       </TouchableOpacity>
