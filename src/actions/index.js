@@ -20,6 +20,7 @@ import {
   UPVOTE_PRESSED,
   DOWNVOTE_PRESSED,
   LOAD_POSTS,
+  LOAD_SPECIFIC_POSTS,
   LOAD_NEWS,
   LOAD_HEADLINES,
   REFRESH_POSTS
@@ -236,6 +237,85 @@ export const LoadPosts = () => {
               fullscore: postObj.upvotes - postObj.downvotes,
               nOfComments: postObj.nOfComments,
               topic: postObj.topic,
+              ranking: postObj.ranking
+            }
+          });
+        }
+      });
+    });
+  };
+};
+
+//Quick note: this is the exact same function as LoadPosts, except that it
+//uses the firebase queries that sorts for a specific headline.
+export const LoadSpecificPosts = (headline) => {
+  return (dispatch) => {
+    pluralCheck = (s) => {
+      if (s === 1) {
+        return ' ago';
+      }
+      return 's ago';
+    };
+
+    timeConverter = (timestamp) => {
+      const a = new Date(timestamp * 1000);
+      const seconds = Math.floor((new Date() - a) / 1000);
+
+      let interval = Math.floor(seconds / 31536000);
+
+      if (interval >= 1) {
+        return `${interval} year${this.pluralCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval >= 1) {
+        return `${interval} month${this.pluralCheck(interval)}`;
+      }
+      // ----IF YOU WANT WEEKS----
+      // interval = Math.floor(seconds / 604800);
+      // if (interval >= 1) {
+      //   return `${interval} week${this.pluralCheck(interval)}`;
+      // }
+      interval = Math.floor(seconds / 86400);
+      if (interval >= 1) {
+        return `${interval} day${this.pluralCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval >= 1) {
+        return `${interval} hr${this.pluralCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval >= 1) {
+        return `${interval} min${this.pluralCheck(interval)}`;
+      }
+      return `${Math.floor(seconds)} second${this.pluralCheck(interval)}`;
+    };
+
+    const that = this;
+
+    //getting data
+    firebase.firestore().collection('posts')
+      .where('topic', '==', headline)
+      .orderBy('timestamp', 'desc')
+      .get()
+      .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        if (doc.exists) {
+          const postObj = doc.data();
+          dispatch({
+            type: LOAD_SPECIFIC_POSTS,
+            payload: {
+              documentId: doc.id,
+              id: postObj.id,
+              content: postObj.content,
+              timestamp: that.timeConverter(postObj.timestamp),
+              location: postObj.location,
+              author: postObj.author,
+              upvotes: postObj.upvotes,
+              downvotes: postObj.downvotes,
+              fullscore: postObj.upvotes - postObj.downvotes,
+              nOfComments: postObj.nOfComments,
+              topic: postObj.topic,
+              ranking: postObj.ranking
             }
           });
         }
@@ -269,7 +349,7 @@ export const PostCreate = ({ post, username, selectedHeadline }) => {
       id: uuid(),
       content: post,
       timestamp: (Math.floor(Date.now() / 1000)),
-      location: 'Boston',
+      location: 'Yandhi',
       author: username,
       uid: currentUser.uid,
       upvotes: 1,

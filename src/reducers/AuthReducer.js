@@ -29,7 +29,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, initialized: false };
     case IS_AUTHENTICATED:
       //console.log('ISAUNTHETICATED USER', action.payload);
-      return { ...state, user: action.payload };
+      return { ...state, user: action.payload, authenticated: true };
     case NOT_AUTHENTICATED:
       return { ...state, authenticated: action.payload };
     case SIGNUP_USER_SUCCESS:

@@ -16,5 +16,6 @@ export const UPVOTE_PRESSED = 'upvote_pressed';
 export const DOWNVOTE_PRESSED = 'downvote_pressed';
 export const LOAD_NEWS = 'load_news';
 export const LOAD_POSTS = 'load_posts';
+export const LOAD_SPECIFIC_POSTS = 'load_specific_posts';
 export const LOAD_HEADLINES = 'load_headlines';
 export const REFRESH_POSTS = 'refresh_posts';

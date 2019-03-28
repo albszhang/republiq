@@ -6,7 +6,7 @@ import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostItem from '../components/PostItem';
 import SectionHeader from '../components/SectionHeader';
 import NewsHeader from '../components/NewsHeader';
-import { RefreshPosts, LoadNews, LoadPosts } from '../actions';
+import { RefreshPosts, LoadNews, LoadPosts, LoadSpecificPosts } from '../actions';
 
 class NewsScreen extends Component {
   constructor(props) {
@@ -32,6 +32,7 @@ class NewsScreen extends Component {
     this.props.RefreshPosts(); //empties the post_feed action state
     this.props.LoadNews();
     this.props.LoadPosts();
+    this.props.LoadSpecificPosts(this.props.navigation.getParam('title'));
 
     this.setState({
       refresh: false,
@@ -70,7 +71,8 @@ class NewsScreen extends Component {
               refreshing={this.state.refresh}
               onRefresh={this.loadNew}
               sections={[
-                { title: 'DISCUSSION', data: this.props.post_feed }
+                //{ title: 'DISCUSSION', data: this.props.post_feed }
+                { title: 'DISCUSSION', data: this.props.post_specific_feed }
               ]}
               renderItem={({ item, index, section }) => (
                 <PostItem index={index} item={item} navigation={this.props.navigation} />
@@ -98,10 +100,11 @@ const styles = {
 
 const mapStateToProps = (state) => {
   return {
-    post_feed: state.feed.post_feed
+    post_feed: state.feed.post_feed,
+    post_specific_feed: state.feed.post_specific_feed
   };
 };
 
 export default connect(mapStateToProps, {
-  RefreshPosts, LoadNews, LoadPosts
+  RefreshPosts, LoadNews, LoadPosts, LoadSpecificPosts
 })(NewsScreen);

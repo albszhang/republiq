@@ -86,6 +86,28 @@ class NotifScreen extends Component {
     );
   }
 
+//THIS IS WHAT YOU WILL USE ON WEBSITE TO UPDATE ALL POSTS WHEN YOU
+//CHANGE THE RANKING OF DIFFERENT HEADLINES. YOU NEED TO MAKE IT
+//DYNAMIC THOUGH.
+  testFireUpdate() {
+    firebase.firestore().collection('posts')
+      .where('topic', '==', 'Trump Cabinet Meeting')
+      .get()
+      .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        if (doc.exists) {
+          console.log('testFireUpdate if exists', doc.data());
+          const postObj = doc.data();
+
+          firebase.firestore().collection('posts').doc(doc.id)
+          .update({ ranking: 5 })
+          .catch((error) => console.log(error));
+        }
+      });
+    })
+    .catch((error) => console.log(error));
+  }
+
   renderTime() {
     const stringDate = new Date().toISOString();
     const date = new Date(`${stringDate}`);
@@ -157,11 +179,17 @@ class NotifScreen extends Component {
             <Text style={styles.buttonTextStyle}>Send Headline Data</Text>
           </TouchableOpacity>
         </View>
+        <View style={{ paddingTop: 15 }}>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={this.testFireUpdate.bind(this)}
+          >
+            <Text style={styles.buttonTextStyle}>Update Data?</Text>
+          </TouchableOpacity>
+        </View>
         {this.buttonResponse()}
         <Text>NOTIFSSCREEEN</Text>
         {this.renderTime()}
-        {this.testId()}
-        {this.testId()}
         {this.testId()}
       </View>
     );

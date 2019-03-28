@@ -14,27 +14,41 @@ import {
 } from '../actions';
 
 //const username = 'testUsername';
-
+//let ranking = 0;
 class PostItem extends Component {
   constructor(props) {
     super(props);
+
+    const found = this.props.news_feed.find((e) => {
+      return e.title === this.props.item.topic;
+    });
+
+    //console.log('testing postitem newfeed data', found.title);
 
     this.state = {
       score: this.props.item.fullscore,
       upvotes: this.props.item.upvotes,
       downvotes: this.props.item.downvotes,
       upvoted: false,
-      downvoted: false
-    };
+      downvoted: false,
 
-    //console.log(this.state);
+      //news data
+      title: found.title,
+      ranking: found.ranking,
+      heat: found.heat,
+      nOfComments: found.nOfComments,
+      nOfArticles: found.nOfArticles
+    };
   }
 
   componentDidMount() {
     const { authed } = this.props;
+    //console.log('is this authed?', authed);
     if (authed) {
       this.checkVoted();
+      //this.retrieveRanking();
     }
+    //console.log('THE STATE OF RANKING?', this.state.ranking);
   }
 
   onUpvotePress() {
@@ -96,6 +110,12 @@ class PostItem extends Component {
     }
   }
 
+  sortNews() {
+    const found = this.props.news_feed.find((e) => {
+      return e.title === this.props.item.topic;
+    });
+  }
+
   checkVoted() {
     const { documentId } = this.props.item;
     const currentUser = firebase.auth().currentUser;
@@ -104,8 +124,6 @@ class PostItem extends Component {
       .doc(`${currentUser.uid}`);
 
     postDoc.get().then((doc) => {
-      console.log(doc);
-
       if (doc.exists) {
         this.setState({
           upvoted: doc.data().upvoted,
@@ -119,6 +137,27 @@ class PostItem extends Component {
       }
     });
   }
+
+  // retrieveRanking() {
+  //   const { topic } = this.props.item;
+  //   const postDoc =
+  //     firebase.firestore().collection('currentHeadlines').doc(`${topic}`);
+  //
+  //   postDoc.get().then((doc) => {
+  //     console.log('TESTEST', doc.data().ranking, topic);
+  //     if (doc.exists) {
+  //       this.setState({
+  //         ranking: doc.data().ranking
+  //       });
+  //       ranking = doc.data().ranking;
+  //       // return (
+  //       //   <Text style={styles.topicText}>{doc.data().ranking}</Text>
+  //       // );
+  //     }
+  //   });
+  //   //console.log('checking ranking??', this.state.ranking);
+  //   //console.log('with a const', ranking);
+  // }
 
   renderUpvoteSection() {
     const { upvoted, downvoted } = this.state;
@@ -243,42 +282,37 @@ class PostItem extends Component {
         </View>
       );
   }
-  // ---BACKUP--
-  // renderYourUsername() {
-  //   const { item, username } = this.props;
-  //   // originally this.props.username, but I'm testing for whether the displayname is funky
-  //   if (username === item.author) {
-  //     return (
-  //       <View style={{ flexDirection: 'row' }}>
-  //         <Text style={styles.yourUsernameText}>YOU</Text>
-  //         <Text style={styles.infoText}>
-  //           &#9702; {item.location} &#9702; {item.timestamp}
-  //         </Text>
-  //       </View>
-  //     );
-  //   }
-  //     return (
-  //       <Text style={styles.infoText}>
-  //         {item.author} &#9702; {item.location} &#9702; {item.timestamp}
-  //       </Text>
-  //     );
-  // }
 
   render() {
-    const { item } = this.props;
+    const { item, navigation } = this.props;
+    //this.retrieveRanking();
+    //console.log('in render', ranking, item.topic);
     return (
       <View style={{ paddingBottom: 15 }} key={this.props.key}>
         <View style={styles.postContainer}>
 
-          <TouchableOpacity style={{ flexDirection: 'row' }}>
-
+          <TouchableOpacity
+            style={{ flexDirection: 'row' }}
+            onPress={() => {
+              navigation.navigate('News', {
+                title: this.state.title,
+                ranking: this.state.ranking,
+                heat: this.state.heat,
+                nOfArticles: this.state.nOfArticles,
+                nOfComments: this.state.nOfComments
+              });
+            }}
+          >
+            {/*
             <View style={{ paddingTop: 1, paddingRight: 7 }}>
               <Image
                 style={{ width: 11, height: 14.3 }}
                 source={require('../img/staticFire.png')}
               />
             </View>
-            <Text style={styles.topicText}>{item.topic}</Text>
+            {item.ranking}
+            */}
+            <Text style={styles.topicText}>{this.state.ranking}. {item.topic}</Text>
             <Image
               style={{ width: 6, height: 10.5, left: 3, top: 3 }}
               source={require('../img/postButtons/topicArrow.png')}
@@ -434,9 +468,11 @@ const styles = {
 };
 
 const mapStateToProps = (state) => {
+  //console.log('post item news feed testing', state.feed.news_feed);
   return {
     username: state.auth.user.displayName,
-    authed: state.auth.authenticated
+    authed: state.auth.authenticated,
+    news_feed: state.feed.news_feed
   };
 };
 
