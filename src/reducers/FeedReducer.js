@@ -1,6 +1,7 @@
 import {
   LOAD_NEWS,
   LOAD_POSTS,
+  LOAD_POST_VOTED,
   LOAD_SPECIFIC_POSTS,
   LOAD_HEADLINES,
   REFRESH_POSTS
@@ -8,6 +9,7 @@ import {
 
 const INITIAL_STATE = {
   post_feed: [],
+  post_vote_info: [],
   post_specific_feed: [],
   news_feed: [],
   headlines: []
@@ -21,9 +23,15 @@ export default (state = INITIAL_STATE, action) => {
         news_feed: [...state.news_feed, action.payload]
       };
     case LOAD_POSTS:
+      console.log('reducer', action.payload);
       return {
         ...state,
         post_feed: [...state.post_feed, action.payload]
+      };
+    case LOAD_POST_VOTED:
+      return {
+        ...state,
+        post_vote_info: [...state.post_vote_info, action.payload]
       };
     case LOAD_SPECIFIC_POSTS:
       return {
@@ -31,7 +39,7 @@ export default (state = INITIAL_STATE, action) => {
         post_specific_feed: [...state.post_specific_feed, action.payload]
       };
     case LOAD_HEADLINES:
-      console.log('Reducer', action.payload);
+      //console.log('Reducer', action.payload);
       return {
         ...state,
         headlines: [...state.headlines, action.payload]

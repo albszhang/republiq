@@ -10,6 +10,7 @@ import PostModal from '../components/PostModal';
 import PostItem from '../components/PostItem';
 import HeadlineItem from '../components/HeadlineItem';
 import SectionHeader from '../components/SectionHeader';
+import ButtonToPost from '../components/ButtonToPost';
 import {
   PostChanged, PostCreate, PostClose, LoadPosts, RefreshPosts, LoadNews, LoadHeadlines
 } from '../actions';
@@ -97,7 +98,6 @@ class HomeScreen extends Component {
           headline: 'Trump Cabinet Meeting'
         },
       ],
-      postActionNewsFeed: this.props.news_feed
     };
   }
 
@@ -117,6 +117,7 @@ class HomeScreen extends Component {
   loadFeed = () => {
     this.setState({
       refresh: true,
+      loading: true
       //news_feed: [] <- put this in after you can load from firebase
     });
 
@@ -148,9 +149,12 @@ class HomeScreen extends Component {
         </View>
         {/* SectionList rendering the header, newsfeed, and postfeed */}
         {this.state.loading === true ? (
-          <View>
-            <Text style={{ justifyContent: 'center', alignItems: 'center' }}>Loading</Text>
-          </View>
+          <View
+            style={{
+              height: 300,
+              backgroundColor: 'white'
+            }}
+          />
         ) : (
           <View styles={{ flex: 1 }}>
             <SectionList
@@ -201,7 +205,6 @@ class HomeScreen extends Component {
             const { post, username, selectedHeadline } = this.props;
             this.props.PostCreate({ post, username, selectedHeadline });
           }}
-          headlineItems={this.state.postActionNewsFeed}
         />
 
         {/* Button to Post */}
@@ -209,7 +212,6 @@ class HomeScreen extends Component {
           <TouchableOpacity
             onPress={() => {
               this.setModalVisible(true);
-              this.setState({ postActionNewsFeed: this.props.news_feed });
             }}
             style={styles.button}
           >
@@ -301,8 +303,9 @@ const mapStateToProps = (state) => {
     post: state.post.PostText,
     selectedHeadline: state.post.selectedHeadline,
     post_feed: state.feed.post_feed,
+    post_vote_info: state.feed.post_vote_info,
     news_feed: state.feed.news_feed,
-    username: state.auth.user.displayName
+    username: state.auth.user.displayName,
   };
 };
 

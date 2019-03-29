@@ -29,8 +29,8 @@ class PostItem extends Component {
       score: this.props.item.fullscore,
       upvotes: this.props.item.upvotes,
       downvotes: this.props.item.downvotes,
-      upvoted: false,
-      downvoted: false,
+      upvoted: this.props.item.upvoted,
+      downvoted: this.props.item.downvoted,
 
       //news data
       title: found.title,
@@ -48,35 +48,45 @@ class PostItem extends Component {
       this.checkVoted();
       //this.retrieveRanking();
     }
-    //console.log('THE STATE OF RANKING?', this.state.ranking);
+    console.log('THE STATE OF UPVOTES?AFTER', this.state.upvotes);
+
+    this.checkUpvoteTF();
+    this.checkDownvoteFT();
+    console.log('THE STATE OF UPVOTES?BEFORE', this.state.upvotes);
   }
 
   onUpvotePress() {
     const { documentId, upvotes, downvotes } = this.props.item;
     const { score, upvoted, downvoted } = this.state;
+    const stateUpvotes = this.state.upvotes;
+    const stateDownvotes = this.state.downvotes;
     //note that when there is no "===", it is just syntactic sugar for "=== true"
     //ex. in (upvoted && downvoted === false) -> upvoted === true
     if (upvoted && downvoted === false) {
       this.setState({
         score: score - 1,
-        upvoted: false
+        upvoted: false,
       });
-      this.props.upvotePressedTF({ documentId, upvotes });
+      //this.props.upvotePressedTF({ documentId, upvotes });
+      console.log('stateUpvoes', stateUpvotes);
+      this.props.upvotePressedTF({ documentId, stateUpvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     } else if (upvoted === false && downvoted === false) {
       this.setState({
         score: score + 1,
-        upvoted: true
+        upvoted: true,
+        //upvotes: upvotes + 1
       });
-      this.props.upvotePressedFF({ documentId, upvotes });
+      //this.props.upvotePressedFF({ documentId, upvotes });
+      this.props.upvotePressedFF({ documentId, stateUpvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     } else if (upvoted === false && downvoted) {
       this.setState({
         score: score + 2,
         upvoted: true,
-        downvoted: false
+        downvoted: false,
       });
-      this.props.upvotePressedFT({ documentId, upvotes, downvotes });
+      this.props.upvotePressedFT({ documentId, stateUpvotes, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     }
   }
@@ -84,6 +94,8 @@ class PostItem extends Component {
   onDownvotePress() {
     const { documentId, upvotes, downvotes } = this.props.item;
     const { score, upvoted, downvoted } = this.state;
+    const stateUpvotes = this.state.upvotes;
+    const stateDownvotes = this.state.downvotes;
 
     if (upvoted && downvoted === false) {
       this.setState({
@@ -91,21 +103,21 @@ class PostItem extends Component {
         upvoted: false,
         downvoted: true
       });
-      this.props.downvotePressedTF({ documentId, upvotes, downvotes });
+      this.props.downvotePressedTF({ documentId, stateUpvotes, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     } else if (upvoted === false && downvoted === false) {
       this.setState({
         score: score - 1,
         downvoted: true
       });
-      this.props.downvotePressedFF({ documentId, downvotes });
+      this.props.downvotePressedFF({ documentId, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     } else if (upvoted === false && downvoted) {
       this.setState({
         score: score + 1,
         downvoted: false
       });
-      this.props.downvotePressedFT({ documentId, downvotes });
+      this.props.downvotePressedFT({ documentId, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     }
   }
@@ -136,6 +148,24 @@ class PostItem extends Component {
           });
       }
     });
+  }
+
+  checkUpvoteTF() {
+    const { upvoted, downvoted } = this.state;
+    if (upvoted && downvoted === false) {
+      this.setState({
+        upvotes: this.state.upvotes - 1
+      });
+    }
+  }
+
+  checkDownvoteFT() {
+    const { upvoted, downvoted } = this.state;
+    if (upvoted === false && downvoted) {
+      this.setState({
+        downvotes: this.state.downvotes - 1
+      });
+    }
   }
 
   // retrieveRanking() {

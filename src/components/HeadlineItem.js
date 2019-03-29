@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { connect } from 'react-redux';
 
 import HeadlineInfoHS from './HeadlineInfoHS';
+import { LoadHeadlines } from '../actions';
 
 let heatColor = '#404040';
 
@@ -32,6 +34,8 @@ class HeadlineItem extends Component {
               nOfArticles: item.nOfArticles,
               nOfComments: item.nOfComments
           });
+          this.props.LoadHeadlines();
+          console.log('getting to the bottom of headlineItem', this.props.headlines);
         }}
         >
           <View style={styles.innerStyle}>
@@ -102,4 +106,10 @@ const styles = {
   },
 };
 
-export default HeadlineItem;
+const mapStateToProps = state => {
+  return {
+    headlines: state.feed.headlines
+  };
+};
+
+export default connect(mapStateToProps, { LoadHeadlines })(HeadlineItem);

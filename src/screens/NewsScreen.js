@@ -1,18 +1,22 @@
 import React, { Component } from 'react';
-import { View, Text, SectionList } from 'react-native';
+import { View, Text, SectionList, TouchableOpacity, Image, Alert } from 'react-native';
 import { connect } from 'react-redux';
 
 import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostItem from '../components/PostItem';
 import SectionHeader from '../components/SectionHeader';
 import NewsHeader from '../components/NewsHeader';
-import { RefreshPosts, LoadNews, LoadPosts, LoadSpecificPosts } from '../actions';
+import PostModal from '../components/PostModal';
+import {
+  PostClose, PostCreate, RefreshPosts, LoadNews, LoadPosts, LoadSpecificPosts,
+} from '../actions';
 
 class NewsScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      modalVisible: false,
       refresh: false,
       loading: false,
     };
@@ -21,6 +25,14 @@ class NewsScreen extends Component {
   componentDidMount() {
     //Load Feed
     this.loadFeed();
+  }
+
+  onClosePostModal() {
+    this.props.PostClose();
+  }
+
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
   }
 
   loadFeed = () => {
@@ -86,6 +98,42 @@ class NewsScreen extends Component {
           </View>
         )
       }
+
+      {/* Popup To Post */}
+
+      <PostModal
+        animationType='slide'
+        visible={this.state.modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}
+        closeModal={() => {
+          this.setModalVisible(!this.state.modalVisible);
+          this.onClosePostModal();
+        }}
+        postAction={() => {
+          this.setModalVisible(!this.state.modalVisible);
+          console.log('postaction', this.props.selectedHeadline);
+          const { post, username, selectedHeadline } = this.props;
+          this.props.PostCreate({ post, username, selectedHeadline });
+        }}
+      />
+
+      {/* Button to Post */}
+      <View style={{ position: 'absolute', bottom: 35, right: 35 }}>
+        <TouchableOpacity
+          onPress={() => {
+            this.setModalVisible(true);
+          }}
+          style={styles.button}
+        >
+          <Image
+            style={{ width: 65, height: 65 }}
+            source={require('../img/PostButton.png')}
+          />
+        </TouchableOpacity>
+      </View>
+
       </View>
     );
   }
@@ -96,15 +144,29 @@ const styles = {
     flex: 1,
     backgroundColor: '#F6F6F6',
   },
+
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 150,
+    shadowColor: 'black',
+    shadowOffset: { height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 7,
+  },
 };
 
 const mapStateToProps = (state) => {
   return {
     post_feed: state.feed.post_feed,
-    post_specific_feed: state.feed.post_specific_feed
+    post_specific_feed: state.feed.post_specific_feed,
+    news_feed: state.feed.news_feed,
+    post: state.post.PostText,
+    username: state.auth.user.displayName,
+    selectedHeadline: state.post.selectedHeadline,
   };
 };
 
 export default connect(mapStateToProps, {
-  RefreshPosts, LoadNews, LoadPosts, LoadSpecificPosts
+  PostClose, PostCreate, RefreshPosts, LoadNews, LoadPosts, LoadSpecificPosts
 })(NewsScreen);

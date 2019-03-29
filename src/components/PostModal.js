@@ -5,45 +5,42 @@ import { ifIphoneX } from 'react-native-iphone-x-helper';
 import ModalDropdown from 'react-native-modal-dropdown';
 
 import CreatePost from './post';
-import { PostHeadlineSelected } from '../actions';
+import { PostHeadlineSelected, AllColorChange, SomeColorChange } from '../actions';
 
 let postColor = '#C9C9C9';
 let fontSize = 16;
 let fontFamily = 'Avenir-Book';
 let color = '#C9C9C9';
-let paddingRight = 7;
-let headlineObject;
 
 class PostModal extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      headlineSelected: false,
       selectedHeadline: 'Error',
     };
   }
 
   componentDidUpdate() {
-    this.postColor();
+    this.textColorChange();
   }
 
-  postColor() {
-    if (this.state.headlineSelected) {
-      postColor = '#FF5353';
-      fontSize = 15;
-      fontFamily = 'Avenir-Heavy';
-      color = '#404040';
-      paddingRight = 7;
+  textColorChange() {
+    if (this.props.headlineSelected && this.props.post.length > 0) {
+      this.props.AllColorChange();
+    } else if (this.props.headlineSelected) {
+      this.props.SomeColorChange();
     }
-  }
-
-  selectHeadlineTouch() {
-    this.setState({ headlineSelected: true });
+    postColor = this.props.postColor;
+    fontSize = this.props.fontSize;
+    fontFamily = this.props.fontFamily;
+    color = this.props.color;
+    console.log('str length?', postColor, this.props.postColor);
   }
 
   renderPostButton() {
-    if (this.state.headlineSelected) {
+    console.log('seeing if headlineSelected', this.props.headlineSelected);
+    if (this.props.headlineSelected) {
       return (
         <View style={{ paddingRight: 18 }}>
           <TouchableOpacity
@@ -77,8 +74,7 @@ class PostModal extends Component {
     const {
       animationType, visible, onRequestClose, closeModal, postAction
     } = this.props;
-    const headlines = this.props.headlineItems;
-    this.postColor();
+    this.textColorChange();
     return (
       <Modal
         animationType={animationType}
@@ -97,21 +93,7 @@ class PostModal extends Component {
                 <Text style={styles.cancelTextStyle}>Cancel</Text>
               </TouchableOpacity>
             </View>
-            {/* PostButton
-            <View style={{ paddingRight: 18 }}>
-              <TouchableOpacity
-                onPress={postAction}
-              >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontFamily: 'Avenir-Black',
-                    color: postColor
-                  }}
-                >POST</Text>
-              </TouchableOpacity>
-            </View>
-            */}
+
             {this.renderPostButton()}
           </View>
 
@@ -128,7 +110,7 @@ class PostModal extends Component {
                   fontSize,
                   fontFamily,
                   color,
-                  paddingRight
+                  paddingRight: 7
                 }}
                 dropdownStyle={{ paddingLeft: 18 }}
                 dropdownTextStyle={styles.dropdownTextStyle}
@@ -146,7 +128,6 @@ class PostModal extends Component {
                 keyboardShouldPersistTaps={'always'}
                 onSelect={(index, value) => {
                   this.props.PostHeadlineSelected(value);
-                  this.setState({ headlineSelected: true });
                 }}
               />
             </View>
@@ -228,12 +209,21 @@ const styles = {
 
 const mapStateToProps = state => {
   //console.log('from postModal', state.post.selectedHeadline);
+  console.log('from postModal', state.feed.headlines);
   return {
     post: state.post.PostText,
     //selectedHeadline: state.post.selectedHeadline,
+    headlineSelected: state.post.headlineSelected,
     news_feed: state.feed.news_feed,
-    headlines: state.feed.headlines
+    headlines: state.feed.headlines,
+
+    postColor: state.post.postColor,
+    fontSize: state.post.fontSize,
+    fontFamily: state.post.fontFamily,
+    color: state.post.color
   };
 };
 
-export default connect(mapStateToProps, { PostHeadlineSelected })(PostModal);
+export default connect(mapStateToProps, {
+  PostHeadlineSelected, AllColorChange, SomeColorChange
+})(PostModal);
