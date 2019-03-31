@@ -11,6 +11,8 @@ export const USERNAME_CHANGED = 'username_changed';
 export const LOGIN_USER_SUCCESS = 'login_user_success';
 export const SIGNUP_USER_SUCCESS = 'signup_user_sucess';
 export const AUTH_USER_FAIL = 'auth_user_fail';
+export const EMAIL_EXISTS_ERROR = 'email_exists_error';
+export const USERNAME_EXISTS_ERROR = 'username_exists_error';
 
 export const POST_CREATED = 'post_created';
 export const HEADLINE_SELECTED = 'headline_selected';

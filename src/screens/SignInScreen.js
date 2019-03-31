@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
-import { emailChanged, passwordChanged, usernameChanged, loginUser, signupUser } from '../actions';
+import {
+  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser, checkEmailUsername
+} from '../actions';
 import LoginForm from '../components/LoginForm';
 
 class SignInScreen extends Component {
@@ -41,7 +43,7 @@ class SignInScreen extends Component {
 
   onSignupButtonPress() {
     const { email, password, username, navigation } = this.props;
-
+    // this.props.checkEmailUsername({ email, username });
     this.props.signupUser({ email, password, username, navigation });
   }
 
@@ -168,10 +170,10 @@ const mapStateToProps = (state) => {
     email: state.auth.email,
     password: state.auth.password,
     username: state.auth.username,
-    error: state.auth.error
+    error: state.auth.error,
   };
 };
 
 export default connect(mapStateToProps, {
-  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser
+  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser, checkEmailUsername
 })(SignInScreen);

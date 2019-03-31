@@ -45,9 +45,9 @@ const AppStackNavigator = createBottomTabNavigator(
       screen: ProfileScreen
     },
 
-    Notif: {
-      screen: NotifScreen
-    },
+    // Notif: {
+    //   screen: NotifScreen
+    // },
   },
   {
     defaultNavigationOptions: ({ navigation }) => ({
@@ -85,23 +85,24 @@ const AppStackNavigator = createBottomTabNavigator(
               />
             );
           }
-        } else if (routeName === 'Notif') {
-          if (tintColor === 'tomato') {
-            return (
-              <Image
-                style={{ width: 23.05, height: 24.2 }}
-                source={require('./img/bottomTab/notifsActive.png')}
-              />
-            );
-          } else if (tintColor === 'gray') {
-            return (
-              <Image
-                style={{ width: 23.05, height: 24.2 }}
-                source={require('./img/bottomTab/notifsInactive.png')}
-              />
-            );
-          }
         }
+        // else if (routeName === 'Notif') {
+        //   if (tintColor === 'tomato') {
+        //     return (
+        //       <Image
+        //         style={{ width: 23.05, height: 24.2 }}
+        //         source={require('./img/bottomTab/notifsActive.png')}
+        //       />
+        //     );
+        //   } else if (tintColor === 'gray') {
+        //     return (
+        //       <Image
+        //         style={{ width: 23.05, height: 24.2 }}
+        //         source={require('./img/bottomTab/notifsInactive.png')}
+        //       />
+        //     );
+        //   }
+        // }
       }
     }),
     tabBarOptions: {

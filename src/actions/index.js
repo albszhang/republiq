@@ -16,6 +16,8 @@ import {
   LOGIN_USER_SUCCESS,
   SIGNUP_USER_SUCCESS,
   AUTH_USER_FAIL,
+  EMAIL_EXISTS_ERROR,
+  USERNAME_EXISTS_ERROR,
 
 
   POST_CREATED,
@@ -28,7 +30,7 @@ import {
   DOWNVOTE_PRESSED,
 
   LOAD_POSTS,
-  LOAD_POST_VOTED,
+  //LOAD_POST_VOTED,
   LOAD_SPECIFIC_POSTS,
   LOAD_NEWS,
   LOAD_HEADLINES,
@@ -100,28 +102,84 @@ export const loginUser = ({ email, password, navigation }) => {
 
 export const signupUser = ({ email, password, username, navigation }) => {
   return (dispatch) => {
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-    //see https://stackoverflow.com/questions/38559457/firebase-v3-updateprofile-method
-      .then(() => {
-        const user = firebase.auth().currentUser;
-        user.updateProfile({ displayName: username });
+    console.log('button pressed?', email);
+    firebase.firestore().collection('users')
+      .where('email', '==', email)
+      .get()
+      .then((snapshot) => {
+        //-----------IS THERE A EMAIL ALREADY?-------
+        console.log('this far?', snapshot);
+        if (snapshot.empty) {
+          firebase.firestore().collection('users')
+            .where('username', '==', username)
+            .get()
+            .then((snapshot2) => {
+              //-----------IS THERE A USERNAME?-------
+              if (snapshot2.empty) {
+                //-----------SIGN IN USER-------
+                console.log('you are good to sign up');
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                //see https://stackoverflow.com/questions/38559457/firebase-v3-updateprofile-method
+                .then(() => {
+                  const user = firebase.auth().currentUser;
+                  user.updateProfile({ displayName: username });
+                })
+                .then(() => {
+                  const currentUser = firebase.auth().currentUser;
+                  //console.log('test');
+                  firebase.firestore().collection('users').doc(currentUser.uid).set({
+                    uid: currentUser.uid,
+                    username,
+                    email,
+                    originDate: Date.now()
+                  });
+                })
+                .then(() => {
+                  navigation.navigate('App');
+                  dispatch({ type: SIGNUP_USER_SUCCESS, payload: firebase.auth().currentUser });
+                })
+                .catch(() => authUserFail(dispatch));
+              } else if (!snapshot2.empty) {
+                dispatch({
+                  type: USERNAME_EXISTS_ERROR
+                });
+              }
+            });
+        } else if (!snapshot.empty) {
+          dispatch({
+            type: EMAIL_EXISTS_ERROR
+          });
+        }
       })
-      .then(() => {
-        const currentUser = firebase.auth().currentUser;
-        //console.log('test');
-        firebase.firestore().collection('users').doc(currentUser.uid).set({
-          uid: currentUser.uid,
-          username,
-          originDate: Date.now()
-        });
-      })
-      .then(() => {
-        navigation.navigate('App');
-        dispatch({ type: SIGNUP_USER_SUCCESS, payload: firebase.auth().currentUser });
-      })
-      .catch(() => authUserFail(dispatch));
+    .catch(error => console.log('check emailusername error', error));
   };
 };
+
+// export const signupUser = ({ email, password, username, navigation }) => {
+//   return (dispatch) => {
+//     firebase.auth().createUserWithEmailAndPassword(email, password)
+//     //see https://stackoverflow.com/questions/38559457/firebase-v3-updateprofile-method
+//     .then(() => {
+//       const user = firebase.auth().currentUser;
+//       user.updateProfile({ displayName: username });
+//     })
+//     .then(() => {
+//       const currentUser = firebase.auth().currentUser;
+//       //console.log('test');
+//       firebase.firestore().collection('users').doc(currentUser.uid).set({
+//         uid: currentUser.uid,
+//         username,
+//         email,
+//         originDate: Date.now()
+//       });
+//     })
+//     .then(() => {
+//       navigation.navigate('App');
+//       dispatch({ type: SIGNUP_USER_SUCCESS, payload: firebase.auth().currentUser });
+//     })
+//     .catch(() => authUserFail(dispatch));
+//   };
+// };
 
 export const authUserFail = (dispatch) => {
   dispatch({ type: AUTH_USER_FAIL });
@@ -258,60 +316,32 @@ export const LoadPosts = () => {
                   downvoted: doc2.data().downvoted
                 }
               });
+            } else {
+              dispatch({
+                type: LOAD_POSTS,
+                payload: {
+                  documentId: doc.id,
+                  id: postObj.id,
+                  content: postObj.content,
+                  timestamp: that.timeConverter(postObj.timestamp),
+                  location: postObj.location,
+                  author: postObj.author,
+                  upvotes: postObj.upvotes,
+                  downvotes: postObj.downvotes,
+                  fullscore: postObj.upvotes - postObj.downvotes,
+                  nOfComments: postObj.nOfComments,
+                  topic: postObj.topic,
+                  ranking: postObj.ranking,
+
+                  upvoted: false,
+                  downvoted: false
+                }
+              });
             }
           });
-          //const postFeed = that.state.post_feed;
-          // dispatch({
-          //   type: LOAD_POSTS,
-          //   payload: {
-          //     documentId: doc.id,
-          //     id: postObj.id,
-          //     content: postObj.content,
-          //     timestamp: that.timeConverter(postObj.timestamp),
-          //     location: postObj.location,
-          //     author: postObj.author,
-          //     upvotes: postObj.upvotes,
-          //     downvotes: postObj.downvotes,
-          //     fullscore: postObj.upvotes - postObj.downvotes,
-          //     nOfComments: postObj.nOfComments,
-          //     topic: postObj.topic,
-          //     ranking: postObj.ranking
-          //   }
-          // });
         }
       });
     });
-
-    // firebase.firestore().collection('posts')
-    //   .orderBy('timestamp', 'desc')
-    //   .get()
-    //   .then((snapshot) => {
-    //   snapshot.docs.forEach(doc => {
-    //     if (doc.exists) {
-    //       console.log('TEST FOR UPVTED', doc.data());
-    //
-    //       const postObj = doc.data();
-    //       //const postFeed = that.state.post_feed;
-    //       dispatch({
-    //         type: LOAD_POSTS,
-    //         payload: {
-    //           documentId: doc.id,
-    //           id: postObj.id,
-    //           content: postObj.content,
-    //           timestamp: that.timeConverter(postObj.timestamp),
-    //           location: postObj.location,
-    //           author: postObj.author,
-    //           upvotes: postObj.upvotes,
-    //           downvotes: postObj.downvotes,
-    //           fullscore: postObj.upvotes - postObj.downvotes,
-    //           nOfComments: postObj.nOfComments,
-    //           topic: postObj.topic,
-    //           ranking: postObj.ranking
-    //         }
-    //       });
-    //     }
-    //   });
-    // });
   };
 };
 
@@ -370,26 +400,85 @@ export const LoadSpecificPosts = (headline) => {
       snapshot.docs.forEach(doc => {
         if (doc.exists) {
           const postObj = doc.data();
-          dispatch({
-            type: LOAD_SPECIFIC_POSTS,
-            payload: {
-              documentId: doc.id,
-              id: postObj.id,
-              content: postObj.content,
-              timestamp: that.timeConverter(postObj.timestamp),
-              location: postObj.location,
-              author: postObj.author,
-              upvotes: postObj.upvotes,
-              downvotes: postObj.downvotes,
-              fullscore: postObj.upvotes - postObj.downvotes,
-              nOfComments: postObj.nOfComments,
-              topic: postObj.topic,
-              ranking: postObj.ranking
+
+          //Getting upvoted/downvoted status
+          const documentId = doc.id;
+          const currentUser = firebase.auth().currentUser;
+          const postDoc =
+            firebase.firestore().collection('posts').doc(`${documentId}`).collection('scoreStatus')
+            .doc(`${currentUser.uid}`);
+          postDoc.get().then((doc2) => {
+            if (doc2.exists) {
+              dispatch({
+                type: LOAD_SPECIFIC_POSTS,
+                payload: {
+                  documentId: doc.id,
+                  id: postObj.id,
+                  content: postObj.content,
+                  timestamp: that.timeConverter(postObj.timestamp),
+                  location: postObj.location,
+                  author: postObj.author,
+                  upvotes: postObj.upvotes,
+                  downvotes: postObj.downvotes,
+                  fullscore: postObj.upvotes - postObj.downvotes,
+                  nOfComments: postObj.nOfComments,
+                  topic: postObj.topic,
+                  ranking: postObj.ranking,
+
+                  upvoted: doc2.data().upvoted,
+                  downvoted: doc2.data().downvoted
+                }
+              });
+            } else {
+              dispatch({
+                type: LOAD_SPECIFIC_POSTS,
+                payload: {
+                  documentId: doc.id,
+                  id: postObj.id,
+                  content: postObj.content,
+                  timestamp: that.timeConverter(postObj.timestamp),
+                  location: postObj.location,
+                  author: postObj.author,
+                  upvotes: postObj.upvotes,
+                  downvotes: postObj.downvotes,
+                  fullscore: postObj.upvotes - postObj.downvotes,
+                  nOfComments: postObj.nOfComments,
+                  topic: postObj.topic,
+                  ranking: postObj.ranking,
+
+                  upvoted: false,
+                  downvoted: false
+                }
+              });
             }
           });
         }
       });
     });
+    //   .then((snapshot) => {
+    //   snapshot.docs.forEach(doc => {
+    //     if (doc.exists) {
+    //       const postObj = doc.data();
+    //       dispatch({
+    //         type: LOAD_SPECIFIC_POSTS,
+    //         payload: {
+    //           documentId: doc.id,
+    //           id: postObj.id,
+    //           content: postObj.content,
+    //           timestamp: that.timeConverter(postObj.timestamp),
+    //           location: postObj.location,
+    //           author: postObj.author,
+    //           upvotes: postObj.upvotes,
+    //           downvotes: postObj.downvotes,
+    //           fullscore: postObj.upvotes - postObj.downvotes,
+    //           nOfComments: postObj.nOfComments,
+    //           topic: postObj.topic,
+    //           ranking: postObj.ranking
+    //         }
+    //       });
+    //     }
+    //   });
+    // });
   };
 };
 

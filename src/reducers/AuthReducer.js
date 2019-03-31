@@ -7,6 +7,8 @@ import {
   PASSWORD_CHANGED,
   USERNAME_CHANGED,
   AUTH_USER_FAIL,
+  EMAIL_EXISTS_ERROR,
+  USERNAME_EXISTS_ERROR,
   SIGNUP_USER_SUCCESS,
   LOGIN_USER_SUCCESS,
 } from '../actions/types';
@@ -18,7 +20,7 @@ const INITIAL_STATE = {
   password: '',
   user: [],
   username: '',
-  error: ''
+  error: '',
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -43,7 +45,19 @@ export default (state = INITIAL_STATE, action) => {
     case USERNAME_CHANGED:
       return { ...state, username: action.payload };
     case AUTH_USER_FAIL:
-      return { ...state, error: 'Authentication Failed', password: '' };
+      return { ...state, error: 'Sign In Error', password: '' };
+    case EMAIL_EXISTS_ERROR:
+      return {
+        ...state,
+        error: 'Sorry, this email already exists!',
+        password: ''
+      };
+    case USERNAME_EXISTS_ERROR:
+      return {
+        ...state,
+        error: 'Sorry, this username already exists!',
+        password: ''
+      };
     default:
       return state;
   }

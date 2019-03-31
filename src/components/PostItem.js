@@ -10,7 +10,9 @@ import {
   upvotePressedFT,
   downvotePressedTF,
   downvotePressedFF,
-  downvotePressedFT
+  downvotePressedFT,
+
+  LoadHeadlines,
 } from '../actions';
 
 //const username = 'testUsername';
@@ -331,6 +333,7 @@ class PostItem extends Component {
                 nOfArticles: this.state.nOfArticles,
                 nOfComments: this.state.nOfComments
               });
+              this.props.LoadHeadlines();
             }}
           >
             {/*
@@ -341,8 +344,11 @@ class PostItem extends Component {
               />
             </View>
             {item.ranking}
-            */}
+
+            if you want to show ranking with the title
             <Text style={styles.topicText}>{this.state.ranking}. {item.topic}</Text>
+            */}
+            <Text style={styles.topicText}>{item.topic}</Text>
             <Image
               style={{ width: 6, height: 10.5, left: 3, top: 3 }}
               source={require('../img/postButtons/topicArrow.png')}
@@ -512,5 +518,7 @@ export default connect(mapStateToProps, {
   upvotePressedFT,
   downvotePressedTF,
   downvotePressedFF,
-  downvotePressedFT
+  downvotePressedFT,
+
+  LoadHeadlines
 })(PostItem);
