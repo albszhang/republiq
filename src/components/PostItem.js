@@ -170,27 +170,6 @@ class PostItem extends Component {
     }
   }
 
-  // retrieveRanking() {
-  //   const { topic } = this.props.item;
-  //   const postDoc =
-  //     firebase.firestore().collection('currentHeadlines').doc(`${topic}`);
-  //
-  //   postDoc.get().then((doc) => {
-  //     console.log('TESTEST', doc.data().ranking, topic);
-  //     if (doc.exists) {
-  //       this.setState({
-  //         ranking: doc.data().ranking
-  //       });
-  //       ranking = doc.data().ranking;
-  //       // return (
-  //       //   <Text style={styles.topicText}>{doc.data().ranking}</Text>
-  //       // );
-  //     }
-  //   });
-  //   //console.log('checking ranking??', this.state.ranking);
-  //   //console.log('with a const', ranking);
-  // }
-
   renderUpvoteSection() {
     const { upvoted, downvoted } = this.state;
 

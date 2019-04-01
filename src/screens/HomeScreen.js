@@ -156,7 +156,7 @@ class HomeScreen extends Component {
             }}
           />
         ) : (
-          <View styles={{ flex: 1 }}>
+          <View>
             <SectionList
               refreshing={this.state.refresh}
               onRefresh={this.loadNew}

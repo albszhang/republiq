@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, View, TouchableOpacity, Image, Text, Dimensions } from 'react-native';
+import { Modal, View, TouchableOpacity, Text, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
 import ModalDropdown from 'react-native-modal-dropdown';

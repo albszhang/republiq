@@ -31,10 +31,14 @@ import {
 
   LOAD_POSTS,
   //LOAD_POST_VOTED,
+  LOAD_PROFILE_POSTS,
   LOAD_SPECIFIC_POSTS,
   LOAD_NEWS,
   LOAD_HEADLINES,
-  REFRESH_POSTS
+  REFRESH_POSTS,
+
+  LOAD_PROFILE_AGE,
+  REFRESH_PROF_POSTS
 } from './types';
 
 //checking if things are isInitialized
@@ -102,13 +106,11 @@ export const loginUser = ({ email, password, navigation }) => {
 
 export const signupUser = ({ email, password, username, navigation }) => {
   return (dispatch) => {
-    console.log('button pressed?', email);
     firebase.firestore().collection('users')
       .where('email', '==', email)
       .get()
       .then((snapshot) => {
         //-----------IS THERE A EMAIL ALREADY?-------
-        console.log('this far?', snapshot);
         if (snapshot.empty) {
           firebase.firestore().collection('users')
             .where('username', '==', username)
@@ -117,7 +119,6 @@ export const signupUser = ({ email, password, username, navigation }) => {
               //-----------IS THERE A USERNAME?-------
               if (snapshot2.empty) {
                 //-----------SIGN IN USER-------
-                console.log('you are good to sign up');
                 firebase.auth().createUserWithEmailAndPassword(email, password)
                 //see https://stackoverflow.com/questions/38559457/firebase-v3-updateprofile-method
                 .then(() => {
@@ -126,7 +127,6 @@ export const signupUser = ({ email, password, username, navigation }) => {
                 })
                 .then(() => {
                   const currentUser = firebase.auth().currentUser;
-                  //console.log('test');
                   firebase.firestore().collection('users').doc(currentUser.uid).set({
                     uid: currentUser.uid,
                     username,
@@ -155,31 +155,6 @@ export const signupUser = ({ email, password, username, navigation }) => {
   };
 };
 
-// export const signupUser = ({ email, password, username, navigation }) => {
-//   return (dispatch) => {
-//     firebase.auth().createUserWithEmailAndPassword(email, password)
-//     //see https://stackoverflow.com/questions/38559457/firebase-v3-updateprofile-method
-//     .then(() => {
-//       const user = firebase.auth().currentUser;
-//       user.updateProfile({ displayName: username });
-//     })
-//     .then(() => {
-//       const currentUser = firebase.auth().currentUser;
-//       //console.log('test');
-//       firebase.firestore().collection('users').doc(currentUser.uid).set({
-//         uid: currentUser.uid,
-//         username,
-//         email,
-//         originDate: Date.now()
-//       });
-//     })
-//     .then(() => {
-//       navigation.navigate('App');
-//       dispatch({ type: SIGNUP_USER_SUCCESS, payload: firebase.auth().currentUser });
-//     })
-//     .catch(() => authUserFail(dispatch));
-//   };
-// };
 
 export const authUserFail = (dispatch) => {
   dispatch({ type: AUTH_USER_FAIL });
@@ -187,6 +162,183 @@ export const authUserFail = (dispatch) => {
 
 
 //Gettting basic user info  ---------
+
+export const LoadProfileAge = () => {
+  return (dispatch) => {
+    pluralProfileCheck = (s) => {
+      if (s === 1) {
+        return ' old';
+      }
+      return 's old';
+    };
+
+    timeProfileConverter = (timestamp) => {
+      //const a = new Date(timestamp * 1000);
+      const seconds = Math.floor((new Date() - timestamp) / 1000);
+
+      let interval = Math.floor(seconds / 31536000);
+
+      if (interval >= 1) {
+        return `${interval} year${this.pluralProfileCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval >= 1) {
+        return `${interval} month${this.pluralProfileCheck(interval)}`;
+      }
+      // ----IF YOU WANT WEEKS----
+      // interval = Math.floor(seconds / 604800);
+      // if (interval >= 1) {
+      //   return `${interval} week${this.pluralCheck(interval)}`;
+      // }
+      interval = Math.floor(seconds / 86400);
+      if (interval >= 1) {
+        return `${interval} day${this.pluralProfileCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval >= 1) {
+        return `${interval} hour${this.pluralProfileCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval >= 1) {
+        return `${interval} minute${this.pluralProfileCheck(interval)}`;
+      }
+      return `${Math.floor(seconds)} second${this.pluralProfileCheck(interval)}`;
+    };
+
+    const that = this;
+    const currentUser = firebase.auth().currentUser;
+    const postDoc = firebase.firestore().collection('users').doc(`${currentUser.uid}`);
+    postDoc.get().then((doc) => {
+      if (doc.exists) {
+        dispatch({
+          type: LOAD_PROFILE_AGE,
+          payload: that.timeProfileConverter(doc.data().originDate)
+        });
+      }
+    });
+  };
+};
+
+export const RefreshProfilePosts = () => {
+  return (dispatch) => {
+    dispatch({
+      type: REFRESH_PROF_POSTS
+    });
+  };
+};
+
+//Quick note: this is the exact same function as LoadPosts, except that it
+//uses the firebase queries that sorts for a specific users.
+export const LoadProfilePosts = (uid) => {
+  return (dispatch) => {
+    pluralCheck = (s) => {
+      if (s === 1) {
+        return ' ago';
+      }
+      return 's ago';
+    };
+
+    timeConverter = (timestamp) => {
+      const a = new Date(timestamp * 1000);
+      const seconds = Math.floor((new Date() - a) / 1000);
+
+      let interval = Math.floor(seconds / 31536000);
+
+      if (interval >= 1) {
+        return `${interval} year${this.pluralCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval >= 1) {
+        return `${interval} month${this.pluralCheck(interval)}`;
+      }
+      // ----IF YOU WANT WEEKS----
+      // interval = Math.floor(seconds / 604800);
+      // if (interval >= 1) {
+      //   return `${interval} week${this.pluralCheck(interval)}`;
+      // }
+      interval = Math.floor(seconds / 86400);
+      if (interval >= 1) {
+        return `${interval} day${this.pluralCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval >= 1) {
+        return `${interval} hr${this.pluralCheck(interval)}`;
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval >= 1) {
+        return `${interval} min${this.pluralCheck(interval)}`;
+      }
+      return `${Math.floor(seconds)} second${this.pluralCheck(interval)}`;
+    };
+
+    const that = this;
+    const currentUser = firebase.auth().currentUser;
+    //getting data
+    firebase.firestore().collection('posts')
+      .where('uid', '==', uid)
+      .orderBy('timestamp', 'desc')
+      .get()
+      .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        if (doc.exists) {
+          const postObj = doc.data();
+
+          //Getting upvoted/downvoted status
+          const documentId = doc.id;
+          const postDoc =
+            firebase.firestore().collection('posts').doc(`${documentId}`).collection('scoreStatus')
+            .doc(`${currentUser.uid}`);
+          postDoc.get().then((doc2) => {
+            if (doc2.exists) {
+              dispatch({
+                type: LOAD_PROFILE_POSTS,
+                payload: {
+                  documentId: doc.id,
+                  id: postObj.id,
+                  content: postObj.content,
+                  timestamp: that.timeConverter(postObj.timestamp),
+                  location: postObj.location,
+                  author: postObj.author,
+                  upvotes: postObj.upvotes,
+                  downvotes: postObj.downvotes,
+                  fullscore: postObj.upvotes - postObj.downvotes,
+                  nOfComments: postObj.nOfComments,
+                  topic: postObj.topic,
+                  ranking: postObj.ranking,
+
+                  upvoted: doc2.data().upvoted,
+                  downvoted: doc2.data().downvoted
+                }
+              });
+            } else {
+              dispatch({
+                type: LOAD_PROFILE_POSTS,
+                payload: {
+                  documentId: doc.id,
+                  id: postObj.id,
+                  content: postObj.content,
+                  timestamp: that.timeConverter(postObj.timestamp),
+                  location: postObj.location,
+                  author: postObj.author,
+                  upvotes: postObj.upvotes,
+                  downvotes: postObj.downvotes,
+                  fullscore: postObj.upvotes - postObj.downvotes,
+                  nOfComments: postObj.nOfComments,
+                  topic: postObj.topic,
+                  ranking: postObj.ranking,
+
+                  upvoted: false,
+                  downvoted: false
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+  };
+};
+
 
 //Loading the homepage feed -----------
 export const LoadNews = () => {
@@ -223,7 +375,7 @@ export const LoadHeadlines = () => {
     .then((snapshot) => {
       snapshot.docs.forEach(doc => {
         if (doc.exists) {
-          console.log('NEWS DATA', doc.data());
+          //console.log('NEWS DATA', doc.data());
           const postObj = doc.data();
           dispatch({
             type: LOAD_HEADLINES,
@@ -455,30 +607,6 @@ export const LoadSpecificPosts = (headline) => {
         }
       });
     });
-    //   .then((snapshot) => {
-    //   snapshot.docs.forEach(doc => {
-    //     if (doc.exists) {
-    //       const postObj = doc.data();
-    //       dispatch({
-    //         type: LOAD_SPECIFIC_POSTS,
-    //         payload: {
-    //           documentId: doc.id,
-    //           id: postObj.id,
-    //           content: postObj.content,
-    //           timestamp: that.timeConverter(postObj.timestamp),
-    //           location: postObj.location,
-    //           author: postObj.author,
-    //           upvotes: postObj.upvotes,
-    //           downvotes: postObj.downvotes,
-    //           fullscore: postObj.upvotes - postObj.downvotes,
-    //           nOfComments: postObj.nOfComments,
-    //           topic: postObj.topic,
-    //           ranking: postObj.ranking
-    //         }
-    //       });
-    //     }
-    //   });
-    // });
   };
 };
 

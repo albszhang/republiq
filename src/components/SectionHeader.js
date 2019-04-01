@@ -7,7 +7,8 @@ class SectionHeader extends Component {
     const { section } = this.props;
 
     return (
-      <View style={styles.sectionHeaderPadding}>
+      <View>
+        <View style={{ height: 15, backgroundColor: '#F6F6F6' }} />
         <View style={styles.sectionHeaderContainerStyle}>
           <Text style={styles.sectionHeaderText}>{section.title}</Text>
         </View>

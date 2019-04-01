@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
 import {
-  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser, checkEmailUsername
+  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser,
 } from '../actions';
 import LoginForm from '../components/LoginForm';
 
@@ -43,7 +43,6 @@ class SignInScreen extends Component {
 
   onSignupButtonPress() {
     const { email, password, username, navigation } = this.props;
-    // this.props.checkEmailUsername({ email, username });
     this.props.signupUser({ email, password, username, navigation });
   }
 
@@ -175,5 +174,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser, checkEmailUsername
+  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser
 })(SignInScreen);

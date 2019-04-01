@@ -10,10 +10,10 @@ import firebase from 'firebase';
 import { connect } from 'react-redux';
 
 import {
-  ProfileScreen,
   NotifScreen,
 } from './screens';
 import HomeScreen from './screens/HomeScreen';
+import ProfileScreen from './screens/ProfileScreen';
 import SignInScreen from './screens/SignInScreen';
 import NewsScreen from './screens/NewsScreen';
 import { isAuthenticated, notAuthenticated } from './actions';

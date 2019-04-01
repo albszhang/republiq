@@ -38,7 +38,6 @@ class NewsScreen extends Component {
   loadFeed = () => {
     this.setState({
       refresh: true,
-      //news_feed: [] <- put this in after you can load from firebase
     });
 
     this.props.RefreshPosts(); //empties the post_feed action state
