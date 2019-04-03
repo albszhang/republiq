@@ -5,6 +5,8 @@ import {
 import firebase from 'firebase';
 import { connect } from 'react-redux';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
+import { WebBrowser } from 'expo';
+
 
 import PostItem from '../components/PostItem';
 
@@ -19,6 +21,8 @@ import {
 } from '../actions';
 
 
+//var SafariView = require('react-native-safari-view');
+
 class ProfileScreen extends Component {
   constructor() {
     super();
@@ -26,8 +30,11 @@ class ProfileScreen extends Component {
       modalVisible: false,
       username: firebase.auth().currentUser.displayName,
       refresh: false,
-      loading: false
+      loading: false,
+      result: null
     };
+
+    this.openBrowser = this.openBrowser.bind(this);
   }
 
   componentDidMount() {
@@ -78,6 +85,23 @@ class ProfileScreen extends Component {
     this.loadFeed(uid);
   }
 
+  //expo webbrowser
+  handlePressButtonAsync = async (doc) => {
+    let url;
+    if (doc === 'privacy') {
+      url = 'https://firebasestorage.googleapis.com/v0/b/republiq-3a89c.appspot.com/o/companyDocs%2FPrivacy%20Policy.pdf?alt=media&token=ebb86af7-122b-4f69-845e-15c6ee7e57a5';
+    } else if (doc === 'tos') {
+      url = 'https://firebasestorage.googleapis.com/v0/b/republiq-3a89c.appspot.com/o/companyDocs%2FTerms%20of%20Service.pdf?alt=media&token=ecd1e8f0-d25f-41e2-b716-4c3561f493e4';
+    }
+     let result = await WebBrowser.openBrowserAsync(url);
+     this.setState({ result });
+   };
+
+   openBrowser(doc) {
+     this.setModalVisible(!this.state.modalVisible);
+     this.handlePressButtonAsync(doc);
+   }
+
   renderList() {
     if (this.props.post_profile_feed === []) {
       return (
@@ -127,6 +151,7 @@ class ProfileScreen extends Component {
 
           <TouchableOpacity
             onPress={() => {
+              //this.props.navigation.navigate('Settings');
               this.setModalVisible(true);
             }}
           >
@@ -169,6 +194,7 @@ class ProfileScreen extends Component {
           )
         }
 
+        {/* Settings Page */}
         <Modal
           animationType='slide'
           transparent
@@ -177,29 +203,54 @@ class ProfileScreen extends Component {
           <ImageBackground
             source={require('../img/background.jpg')} style={{ width: '100%', height: '100%' }}
           >
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity
-                onPressOut={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}
-                style={{ paddingLeft: 25, paddingTop: 45, paddingBottom: 10 }}
-              >
-                <Image
-                  style={{ height: 30, width: 30 }}
-                  source={require('../img/whiteExitButton.png')}
-                />
-              </TouchableOpacity>
-              <View style={{ paddingLeft: 25 }}>
-                <Text style={styles.settingsTextStyle}>Settings</Text>
-              </View>
-              <View style={{ paddingTop: 15, paddingLeft: 25 }}>
+            <View style={{ flex: 1, justifyContent: 'space-between' }}>
+
+              <View>
                 <TouchableOpacity
-                  style={styles.buttonStyle}
-                  onPress={this.onSignoutButtonPress}
+                  onPressOut={() => {
+                    this.setModalVisible(!this.state.modalVisible);
+                  }}
+                  style={{ paddingLeft: 25, paddingTop: 45, paddingBottom: 10 }}
                 >
-                  <Text style={styles.buttonTextStyle}>Sign Out</Text>
+                  <Image
+                    style={{ height: 30, width: 30 }}
+                    source={require('../img/whiteExitButton.png')}
+                  />
+                </TouchableOpacity>
+                <View style={{ paddingLeft: 25 }}>
+                  <Text style={styles.settingsTextStyle}>Settings</Text>
+                </View>
+
+                <View style={{ paddingTop: 15, paddingLeft: 25 }}>
+                  <TouchableOpacity
+                    style={styles.buttonStyle}
+                    onPress={this.onSignoutButtonPress}
+                  >
+                    <Text style={styles.buttonTextStyle}>Sign Out</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={{ flexDirection: 'row', paddingBottom: 20 }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.openBrowser('privacy');
+                  }}
+                  style={{ paddingLeft: 25 }}
+                >
+                  <Text style={styles.footerTextStyle}>Privacy Policy</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    this.openBrowser('tos');
+                  }}
+                  style={{ paddingLeft: 25 }}
+                >
+                  <Text style={styles.footerTextStyle}>Terms of Service</Text>
                 </TouchableOpacity>
               </View>
+
             </View>
           </ImageBackground>
         </Modal>
@@ -278,7 +329,11 @@ const styles = {
     fontFamily: 'Avenir-Medium',
     color: '#242424'
   },
-
+  footerTextStyle: {
+    fontSize: 15,
+    fontFamily: 'Avenir-Roman',
+    color: 'white'
+  },
   modalStyle: {
     //backgroundColor: 'white',
     zIndex: 9,

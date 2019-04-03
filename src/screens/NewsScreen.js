@@ -8,7 +8,13 @@ import SectionHeader from '../components/SectionHeader';
 import NewsHeader from '../components/NewsHeader';
 import PostModal from '../components/PostModal';
 import {
-  PostClose, PostCreate, RefreshPosts, LoadNews, LoadPosts, LoadSpecificPosts,
+  PostClose,
+  PostCreate,
+  RefreshPosts,
+  LoadNews, LoadPosts,
+  LoadSpecificPosts,
+  UpdateComments,
+  LoadArticles
 } from '../actions';
 
 class NewsScreen extends Component {
@@ -42,6 +48,7 @@ class NewsScreen extends Component {
 
     this.props.RefreshPosts(); //empties the post_feed action state
     this.props.LoadNews();
+    this.props.LoadArticles(this.props.navigation.getParam('title'));
     this.props.LoadPosts();
     this.props.LoadSpecificPosts(this.props.navigation.getParam('title'));
 
@@ -54,6 +61,11 @@ class NewsScreen extends Component {
   loadNew = () => {
     //Load Feed
     this.loadFeed();
+
+    // THIS UPDATES THE COMMENTS - STICK IT SOMEWHERE ELSE THO
+    // const nOfComments = this.props.post_specific_feed.length;
+    // const title = this.props.navigation.getParam('title');
+    // this.props.UpdateComments({ nOfComments, title });
   }
 
   navProps(prop) {
@@ -167,5 +179,12 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  PostClose, PostCreate, RefreshPosts, LoadNews, LoadPosts, LoadSpecificPosts
+  PostClose,
+  PostCreate,
+  RefreshPosts,
+  LoadNews,
+  LoadPosts, 
+  LoadSpecificPosts,
+  UpdateComments,
+  LoadArticles
 })(NewsScreen);

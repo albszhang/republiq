@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Share, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import firebase from 'firebase';
 import { Haptic } from 'expo';
@@ -122,6 +122,15 @@ class PostItem extends Component {
       this.props.downvotePressedFT({ documentId, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     }
+  }
+
+  sharePost() {
+    Share.share({
+      //title: 'Check out this OPINION from Republiq: ',
+      message: `Check out this super cool opinion from Republiq: "${this.props.item.content}"`,
+      url: 'https://www.getrepubliq.com/'
+    //  message: `${this.props.item.content}`
+    });
   }
 
   sortNews() {
@@ -353,7 +362,7 @@ class PostItem extends Component {
             {/* Upvote and Downvote*/}
             {this.renderUpvoteSection()}
 
-            {/* Comments */}
+            {/* Comments
             <TouchableOpacity
               onPress={() => { this.props.navigation.navigate('News'); }}
             >
@@ -366,14 +375,45 @@ class PostItem extends Component {
               </View>
             </TouchableOpacity>
 
+            */}
+
             {/* Share */}
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={this.sharePost.bind(this)}
+            >
               <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                 <Image
                   style={{ width: 18, height: 15.5 }}
                   source={require('../img/postButtons/share.png')}
                 />
                 <Text style={styles.bottomBarText}>Share</Text>
+              </View>
+            </TouchableOpacity>
+
+            {/* Report */}
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert(
+                  'Report Post',
+                  'Are you sure you want to report this post?',
+                  [
+                    { text: 'Yes', onPress: () => console.log('Ask me later pressed') },
+                    {
+                      text: 'Cancel',
+                      onPress: () => console.log('Cancel Pressed'),
+                      style: 'cancel',
+                    },
+                  ],
+                  { cancelable: false },
+                );
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                <Image
+                  style={{ width: 15, height: 15 }}
+                  source={require('../img/postButtons/report.png')}
+                />
+                <Text style={styles.bottomBarText}>Report</Text>
               </View>
             </TouchableOpacity>
 

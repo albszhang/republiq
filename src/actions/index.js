@@ -30,6 +30,7 @@ import {
   DOWNVOTE_PRESSED,
 
   LOAD_POSTS,
+  LOAD_ARTICLES,
   //LOAD_POST_VOTED,
   LOAD_PROFILE_POSTS,
   LOAD_SPECIFIC_POSTS,
@@ -38,7 +39,9 @@ import {
   REFRESH_POSTS,
 
   LOAD_PROFILE_AGE,
-  REFRESH_PROF_POSTS
+  REFRESH_PROF_POSTS,
+
+  UPDATE_COMMENTS
 } from './types';
 
 //checking if things are isInitialized
@@ -367,6 +370,30 @@ export const LoadNews = () => {
  };
 };
 
+export const LoadArticles = (headline) => {
+  return (dispatch) => {
+    firebase.firestore().collection('currentHeadlines')
+    .doc(`${headline}`).collection('articles')
+    .get()
+    .then((snapshot) => {
+      snapshot.docs.forEach(doc => {
+        if (doc.exists) {
+          const postObj = doc.data();
+          dispatch({
+            type: LOAD_ARTICLES,
+            payload: {
+              headline: postObj.headline,
+              imgurl: postObj.imgurl,
+              time: this.timeConverter(postObj.time),
+              url: postObj.url
+            }
+          });
+        }
+      });
+    });
+  };
+};
+
 export const LoadHeadlines = () => {
  return (dispatch) => {
    firebase.firestore().collection('currentHeadlines')
@@ -629,6 +656,15 @@ export const PostCreate = ({ post, username, selectedHeadline }) => {
   const uuid = require('uuid');
   //console.log('testing for headlineSelect', selectedHeadline);
   const posts = firebase.firestore().collection('posts');
+  const news = firebase.firestore().collection('currentHeadlines');
+  let nOfComments = 0;
+  news.doc(`${selectedHeadline}`).get()
+    .then((doc) => {
+      if (doc.exists) {
+        nOfComments = doc.data().nOfComments;
+        console.log('what is nOfComments', nOfComments);
+      }
+    });
   const currentUser = firebase.auth().currentUser;
   return (dispatch) => {
     posts.add({
@@ -650,6 +686,11 @@ export const PostCreate = ({ post, username, selectedHeadline }) => {
           downvoted: false
       })
       .catch((console.log('something went wrong')));
+    })
+    .then(() => {
+      if (nOfComments !== 0) {
+          news.doc(`${selectedHeadline}`).update({ nOfComments: parseInt(nOfComments, 10) + 1 });
+      }
     })
     .then(dispatch({ type: POST_CREATED }));
   };
@@ -795,5 +836,14 @@ export const downvotePressedFT = ({ documentId, stateDownvotes }) => {
       });
     })
     .then(dispatch({ type: DOWNVOTE_PRESSED }));
+  };
+};
+
+//----STICK THIS SOMEWHERE LIKE ON THE WEBSITE
+export const UpdateComments = ({ nOfComments, title }) => {
+  const news = firebase.firestore().collection('currentHeadlines');
+  return (dispatch) => {
+    news.doc(`${title}`).update({ nOfComments })
+    .then(dispatch({ type: UPDATE_COMMENTS }));
   };
 };

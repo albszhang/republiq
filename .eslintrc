@@ -4,5 +4,5 @@
     "global-require": "off",
     "arrow-body-style": "off",
     "no-else-return": "off",
-  }
+  },
 }

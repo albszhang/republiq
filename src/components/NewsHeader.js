@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, Linking, Dimensions, WebView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, Dimensions } from 'react-native';
 import { withNavigation } from 'react-navigation';
+import { connect } from 'react-redux';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
+import { WebBrowser } from 'expo';
 //import SafariView from 'react-native-safari-view';
 
 import HeadlineInfo from './HeadlineInfo';
@@ -46,30 +48,24 @@ class NewsHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeSlide: 0
+      activeSlide: 0,
+      result: null
     };
+    //this.handlePressButtonAsync = this.handlePressButtonAsync.bind(this);
   }
 
   openLink() {
     Linking.openURL(
       'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
     ).catch((err) => console.error('An error occurred', err));
-    // SafariView.isAvailable()
-    //  .then(SafariView.show({
-    //    url: 'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
-    //  }))
-    //  .catch(() => {
-    //    Linking.openURL(
-    //      'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html'
-    //    ).catch((err) => console.error('An error occurred', err));
-    //  });
   }
 
   get pagination() {
         const { activeSlide } = this.state;
         return (
             <Pagination
-              dotsLength={tempData.length}
+              //dotsLength={tempData.length}
+              dotsLength={this.props.articles.length}
               activeDotIndex={activeSlide}
               //carouselRef={(c) => { this._carousel = c; }}
               containerStyle={{
@@ -103,6 +99,12 @@ class NewsHeader extends Component {
         );
     }
 
+  handlePressButtonAsync = async () => {
+    const url = this.props.item.url;
+    let result = await WebBrowser.openBrowserAsync(url);
+    this.setState({ result });
+  };
+
   renderItem({ item, index }) {
     return (
       <TouchableOpacity
@@ -112,17 +114,30 @@ class NewsHeader extends Component {
           paddingLeft: 20,
           width: Dimensions.get('window').width,
         }}
-        onPress={() => {
-          Linking.openURL(item.url)
-          .catch((err) => console.error('An error occurred', err));
+        onPress={async () => {
+          const url = item.url;
+          let result = await WebBrowser.openBrowserAsync(url);
+          this.setState({ result });
+          //this.handlePressButtonAsync.bind(this);
+          // Linking.openURL(item.url)
+          // .catch((err) => console.error('An error occurred', err));
+
         }}
       >
         {/* Article Info */}
         <View style={styles.articleInfoContainerStyle}>
           <View style={{ paddingRight: 8 }}>
             <Image
-              style={{ width: 22.7, height: 25.3 }}
-              source={{uri: 'https://firebasestorage.googleapis.com/v0/b/republiq-3a89c.appspot.com/o/newsIcons%2Fnytimes.png?alt=media&token=838be42d-e2ff-45ad-be73-b7decbcb3913'}}
+              //style={{ width: 22.7, height: 25.3 }}
+              style={{
+                flex: 1,
+                alignSelf: 'stretch',
+                width: 25,
+                height: 25,
+              }}
+              resizeMode={'contain'}
+              source={{ uri: `${item.imgurl}` }}
+              //source={{uri: 'https://firebasestorage.googleapis.com/v0/b/republiq-3a89c.appspot.com/o/newsIcons%2Fnytimes.png?alt=media&token=838be42d-e2ff-45ad-be73-b7decbcb3913'}}
             />
           </View>
           <View style={{ paddingRight: 8 }}>
@@ -142,6 +157,7 @@ class NewsHeader extends Component {
       </TouchableOpacity>
     );
   }
+
   render() {
     //const { navigation } = this.props;
     const title = this.props.navigation.getParam('title');
@@ -192,7 +208,8 @@ class NewsHeader extends Component {
 
           <Carousel
             ref={(c) => { this._carousel = c; }}
-            data={tempData}
+            //data={tempData}
+            data={this.props.articles}
             renderItem={this.renderItem}
             layout={'default'}
             sliderWidth={Dimensions.get('window').width}
@@ -242,4 +259,11 @@ const styles = {
     paddingBottom: 8
   },
 };
-export default withNavigation(NewsHeader);
+
+const mapStateToProps = state => {
+  return {
+    articles: state.feed.articles
+  };
+};
+
+export default connect(mapStateToProps)(withNavigation(NewsHeader));

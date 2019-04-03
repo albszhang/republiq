@@ -15,12 +15,14 @@
     "react-native-keyboard-accessory": "^0.1.9",
     "react-native-modal-dropdown": "^0.6.2",
     "react-native-pagination": "^1.5.5",
+    "react-native-pdf": "^5.0.12",
     "react-native-safari-view": "^2.1.0",
     "react-native-snap-carousel": "^3.7.5",
     "react-navigation": "^3.3.2",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
+    "rn-fetch-blob": "^0.10.13",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

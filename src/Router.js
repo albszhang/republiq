@@ -16,6 +16,7 @@ import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SignInScreen from './screens/SignInScreen';
 import NewsScreen from './screens/NewsScreen';
+import SettingsScreen from './screens/SettingsScreen';
 import { isAuthenticated, notAuthenticated } from './actions';
 
 const AuthStack = createStackNavigator({
@@ -25,7 +26,8 @@ const AuthStack = createStackNavigator({
 const HomeStack = createStackNavigator(
   {
     Home: HomeScreen,
-    News: NewsScreen
+    News: NewsScreen,
+    //Settings: SettingsScreen
   },
   {
     headerMode: 'none',

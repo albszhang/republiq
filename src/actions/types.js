@@ -24,6 +24,7 @@ export const UPVOTE_PRESSED = 'upvote_pressed';
 export const DOWNVOTE_PRESSED = 'downvote_pressed';
 
 export const LOAD_NEWS = 'load_news';
+export const LOAD_ARTICLES = 'load_articles';
 export const LOAD_POSTS = 'load_posts';
 export const LOAD_POST_VOTED = 'load_post_voted';
 export const LOAD_SPECIFIC_POSTS = 'load_specific_posts';
@@ -33,3 +34,5 @@ export const REFRESH_POSTS = 'refresh_posts';
 export const LOAD_PROFILE_AGE = 'load_profile_age';
 export const LOAD_PROFILE_POSTS = 'load_profile_posts';
 export const REFRESH_PROF_POSTS = 'refresh_prof_posts';
+
+export const UPDATE_COMMENTS = 'update_comments';
