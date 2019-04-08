@@ -11,6 +11,7 @@ import {
   USERNAME_EXISTS_ERROR,
   SIGNUP_USER_SUCCESS,
   LOGIN_USER_SUCCESS,
+  EMPTY_INPUT,
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -46,6 +47,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, username: action.payload };
     case AUTH_USER_FAIL:
       return { ...state, error: 'Sign In Error', password: '' };
+    case EMPTY_INPUT: 
+      return { ...state, username: '', email: '', password: '' };
     case EMAIL_EXISTS_ERROR:
       return {
         ...state,

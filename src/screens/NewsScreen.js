@@ -11,10 +11,15 @@ import {
   PostClose,
   PostCreate,
   RefreshPosts,
-  LoadNews, LoadPosts,
-  LoadSpecificPosts,
+  LoadNews,
+  LoadNewestPosts,
+  LoadTopPosts,
+  //LoadSpecificPosts,
+  LoadNewestSpecificPosts,
+  LoadTopSpecificPosts,
   UpdateComments,
-  LoadArticles
+  LoadArticles,
+  DefaultColor
 } from '../actions';
 
 class NewsScreen extends Component {
@@ -30,7 +35,7 @@ class NewsScreen extends Component {
 
   componentDidMount() {
     //Load Feed
-    this.loadFeed();
+    this.loadFeed('TOP');
   }
 
   onClosePostModal() {
@@ -41,16 +46,29 @@ class NewsScreen extends Component {
     this.setState({ modalVisible: visible });
   }
 
-  loadFeed = () => {
+  loadFeed = (sortMethod) => {
     this.setState({
       refresh: true,
     });
-
+    console.log('TITLE?', this.props.navigation.getParam('title'));
     this.props.RefreshPosts(); //empties the post_feed action state
     this.props.LoadNews();
     this.props.LoadArticles(this.props.navigation.getParam('title'));
-    this.props.LoadPosts();
-    this.props.LoadSpecificPosts(this.props.navigation.getParam('title'));
+
+    //homepage feed loading
+    if (sortMethod === 'NEWEST') {
+      this.props.LoadNewestPosts();
+    } else if (sortMethod === 'TOP') {
+      this.props.LoadTopPosts();
+    }
+
+    //newspage feed loading
+    if (sortMethod === 'NEWEST') {
+      this.props.LoadNewestSpecificPosts(this.props.navigation.getParam('title'));
+    } else if (sortMethod === 'TOP') {
+      this.props.LoadTopSpecificPosts(this.props.navigation.getParam('title'));
+    }
+    //this.props.LoadSpecificPosts(this.props.navigation.getParam('title'));
 
     this.setState({
       refresh: false,
@@ -58,9 +76,9 @@ class NewsScreen extends Component {
     });
   }
 
-  loadNew = () => {
+  loadNew = (sortMethod) => {
     //Load Feed
-    this.loadFeed();
+    this.loadFeed(sortMethod);
 
     // THIS UPDATES THE COMMENTS - STICK IT SOMEWHERE ELSE THO
     // const nOfComments = this.props.post_specific_feed.length;
@@ -92,7 +110,9 @@ class NewsScreen extends Component {
           <View style={{ flex: 1 }}>
             <SectionList
               refreshing={this.state.refresh}
-              onRefresh={this.loadNew}
+              onRefresh={() => {
+                this.loadNew(this.props.sortMethod);
+              }}
               sections={[
                 //{ title: 'DISCUSSION', data: this.props.post_feed }
                 { title: 'DISCUSSION', data: this.props.post_specific_feed }
@@ -101,7 +121,10 @@ class NewsScreen extends Component {
                 <PostItem index={index} item={item} navigation={this.props.navigation} />
               )}
               renderSectionHeader={({ section }) => (
-                <SectionHeader section={section} />
+                <SectionHeader
+                  section={section}
+                  refresh={(sortMethod) => { this.loadFeed(sortMethod); }}
+                />
               )}
               ListHeaderComponent={this.renderHead()}
               keyExtractor={(item, index) => index.toString()}
@@ -127,6 +150,8 @@ class NewsScreen extends Component {
           console.log('postaction', this.props.selectedHeadline);
           const { post, username, selectedHeadline } = this.props;
           this.props.PostCreate({ post, username, selectedHeadline });
+          this.props.DefaultColor();
+          this.loadFeed();
         }}
       />
 
@@ -183,8 +208,12 @@ export default connect(mapStateToProps, {
   PostCreate,
   RefreshPosts,
   LoadNews,
-  LoadPosts, 
-  LoadSpecificPosts,
+  LoadNewestPosts,
+  LoadTopPosts,
+  LoadNewestSpecificPosts,
+  LoadTopSpecificPosts,
+  //LoadSpecificPosts,
   UpdateComments,
-  LoadArticles
+  LoadArticles,
+  DefaultColor
 })(NewsScreen);

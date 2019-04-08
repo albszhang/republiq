@@ -35,11 +35,9 @@ class PostModal extends Component {
     fontSize = this.props.fontSize;
     fontFamily = this.props.fontFamily;
     color = this.props.color;
-    console.log('str length?', postColor, this.props.postColor);
   }
 
   renderPostButton() {
-    console.log('seeing if headlineSelected', this.props.headlineSelected);
     if (this.props.headlineSelected) {
       return (
         <View style={{ paddingRight: 18 }}>
@@ -208,8 +206,6 @@ const styles = {
 };
 
 const mapStateToProps = state => {
-  //console.log('from postModal', state.post.selectedHeadline);
-  console.log('from postModal', state.feed.headlines);
   return {
     post: state.post.PostText,
     //selectedHeadline: state.post.selectedHeadline,

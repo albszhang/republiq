@@ -15,13 +15,22 @@ import {
 import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import SignInScreen from './screens/SignInScreen';
+import LogInScreen from './screens/LogInScreen';
 import NewsScreen from './screens/NewsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import { isAuthenticated, notAuthenticated } from './actions';
 
-const AuthStack = createStackNavigator({
-  AuthScreen: SignInScreen
-});
+const AuthStack = createStackNavigator(
+  {
+    //property shorthand, originally SignInScreen: SignInScreen, or AuthScreen: SignInScreen
+    SignInScreen,
+    LogInScreen
+
+  },
+  {
+    headerMode: 'none',
+  }
+);
 
 const HomeStack = createStackNavigator(
   {
@@ -88,23 +97,6 @@ const AppStackNavigator = createBottomTabNavigator(
             );
           }
         }
-        // else if (routeName === 'Notif') {
-        //   if (tintColor === 'tomato') {
-        //     return (
-        //       <Image
-        //         style={{ width: 23.05, height: 24.2 }}
-        //         source={require('./img/bottomTab/notifsActive.png')}
-        //       />
-        //     );
-        //   } else if (tintColor === 'gray') {
-        //     return (
-        //       <Image
-        //         style={{ width: 23.05, height: 24.2 }}
-        //         source={require('./img/bottomTab/notifsInactive.png')}
-        //       />
-        //     );
-        //   }
-        // }
       }
     }),
     tabBarOptions: {
@@ -117,18 +109,6 @@ const AppStackNavigator = createBottomTabNavigator(
 
 let firebaseAppDefined = false;
 class AuthLoading extends Component {
-  // constructor() {
-  //   super();
-  //   this.state = {
-  //     authed: false
-  //   };
-  // }
-  // componentDidMount() {
-  //    this.mounted = true;
-  // }
-  // componentWillUnmount() {
-  //    this.mounted = false;
-  //  }
 
    checkAuthentication() {
      firebase.auth().onAuthStateChanged((user) => {
@@ -184,7 +164,7 @@ class AuthLoading extends Component {
           justifyContent: 'center'
         }}
       >
-        <Text> Fucking loading </Text>
+        <Text> Loading! </Text>
         <ActivityIndicator />
       </View>
     );

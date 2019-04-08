@@ -8,42 +8,6 @@ import { WebBrowser } from 'expo';
 
 import HeadlineInfo from './HeadlineInfo';
 
-const tempData = [
-  {
-    id: 23452345,
-    //index: 1,
-    img: 'nytimes.png',
-    time: '3 hours ago',
-    url: 'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html',
-    headline: 'Elizabeth Warren Announces Iowa Trip as She Starts Running for President in 2020'
-  },
-  {
-    id: 5280326,
-    //index: 2,
-    img: 'nytimes.png',
-    time: '3 hours ago',
-    url: 'https://deadline.com/2019/03/elizabeth-warren-stephen-colbert-bill-barr-robert-mueller-report-donald-trump-video-1202582517/',
-    headline:
-    'Elizabeth Warren Tells Stephen Colbert She Does Not Trust Barr’s Mueller Report Recap'
-  },
-  {
-    id: 3,
-    //index: 3,
-    img: 'nytimes.png',
-    time: '3 hours ago',
-    url: 'https://thehill.com/homenews/campaign/435768-elizabeth-warren-after-tmz-catches-her-sprinting-to-catch-train-try-and',
-    headline: 'Elizabeth Warren after TMZ catches her sprinting to catch train: Try and Keep Up'
-  },
-  {
-    id: 10,
-    //index: -10,
-    img: 'nytimes.png',
-    time: '3 hours ago',
-    url: 'https://www.nytimes.com/2018/12/31/us/politics/elizabeth-warren-2020-president-announcement.html',
-    headline: 'testytest'
-  },
-];
-
 class NewsHeader extends Component {
   constructor(props) {
     super(props);
@@ -146,7 +110,7 @@ class NewsHeader extends Component {
               source={require('../img/dotBig.png')}
             />
           </View>
-          <Text style={styles.timeTextStyle}>3 hours ago</Text>
+          <Text style={styles.timeTextStyle}>{item.time}</Text>
         </View>
         {/* Article Text */}
         <View style={{ paddingTop: 3, paddingRight: 24 }}>
@@ -160,6 +124,7 @@ class NewsHeader extends Component {
 
   render() {
     //const { navigation } = this.props;
+    console.log('UNDEFINED?', this.props.navigation.getParam('title'));
     const title = this.props.navigation.getParam('title');
     const ranking = this.props.navigation.getParam('ranking');
     const heat = this.props.navigation.getParam('heat');

@@ -13,7 +13,7 @@ import PostItem from '../components/PostItem';
 import {
   RefreshPosts,
   RefreshProfilePosts,
-  LoadPosts,
+  LoadNewestPosts,
   LoadNews,
   LoadHeadlines,
   LoadProfilePosts,
@@ -68,7 +68,7 @@ class ProfileScreen extends Component {
     this.props.RefreshProfilePosts();
     //this.props.LoadProfileAge();
     this.props.LoadNews();
-    this.props.LoadPosts();
+    this.props.LoadNewestPosts();
     this.props.LoadHeadlines();
     this.props.LoadProfilePosts(uid);
     //this.props.LoadSpecificPosts(this.props.navigation.getParam('title'));
@@ -358,7 +358,7 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
   RefreshPosts,
   RefreshProfilePosts,
-  LoadPosts,
+  LoadNewestPosts,
   LoadNews,
   LoadHeadlines,
   LoadProfilePosts,

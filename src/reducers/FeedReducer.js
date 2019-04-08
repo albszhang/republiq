@@ -32,7 +32,6 @@ export default (state = INITIAL_STATE, action) => {
         articles: [...state.articles, action.payload]
       };
     case LOAD_POSTS:
-      console.log('reducer', action.payload);
       return {
         ...state,
         post_feed: [...state.post_feed, action.payload]
@@ -48,7 +47,6 @@ export default (state = INITIAL_STATE, action) => {
         post_specific_feed: [...state.post_specific_feed, action.payload]
       };
     case LOAD_HEADLINES:
-      //console.log('Reducer', action.payload);
       return {
         ...state,
         headlines: [...state.headlines, action.payload]

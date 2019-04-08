@@ -79,8 +79,8 @@ class NotifScreen extends Component {
 
 
   testId() {
-    console.log(uuidv4());
-    console.log(firebase.firestore().Timestamp);
+    // console.log(uuidv4());
+    // console.log(firebase.firestore().Timestamp);
     return (
       <Text>{uuidv4()}</Text>
     );
@@ -96,7 +96,7 @@ class NotifScreen extends Component {
       .then((snapshot) => {
       snapshot.docs.forEach(doc => {
         if (doc.exists) {
-          console.log('testFireUpdate if exists', doc.data());
+          //console.log('testFireUpdate if exists', doc.data());
           const postObj = doc.data();
 
           firebase.firestore().collection('posts').doc(doc.id)
@@ -106,6 +106,77 @@ class NotifScreen extends Component {
       });
     })
     .catch((error) => console.log(error));
+  }
+
+  migrateHeadlineData() {
+    const currentHeadline =
+      firebase.firestore().collection('currentHeadlines').doc(`${this.state.title}`);
+
+      currentHeadline.get()
+      .then((doc) => {
+        if (doc.exists) {
+          const postObj = doc.data();
+
+          //basic headline information moved
+          firebase.firestore().collection('archivedHeadlines').doc(`${postObj.title}`)
+            .set({
+              title: postObj.title,
+              ranking: postObj.ranking,
+              heat: postObj.heat,
+              nOfArticles: postObj.nOfArticles,
+              nOfComments: postObj.nOfComments,
+              dateCreated: postObj.dateCreated,
+              id: postObj.id,
+            });
+
+          //headline articles moved
+          currentHeadline.collection('articles').get()
+            .then((snapshot) => {
+              //console.log(snapshot);
+              snapshot.docs.forEach(doc2 => {
+                if (doc2.exists) {
+                  const postObj2 = doc2.data();
+                  //console.log(doc2.data());
+                  firebase.firestore().collection('archivedHeadlines').doc(`${this.state.title}`)
+                  .collection('articles').doc(`${postObj2.id}`)
+                  .set({
+                    headline: postObj2.headline,
+                    url: postObj2.url,
+                    imgurl: postObj2.imgurl,
+                    time: postObj2.time,
+                    id: postObj2.id
+                  });
+                }
+              });
+            });
+
+          firebase.firestore().collection('posts').where('topic', '==', this.state.title)
+            .get()
+            .then((snapshot) => {
+              snapshot.docs.forEach(doc3 => {
+                if (doc3.exists) {
+                  firebase.firestore().collection('posts').doc(`${doc3.id}`)
+                    .update({ current: false });
+                }
+              });
+            });
+          // currentHeadline.collection('articles').delete();
+          // currentHeadline.delete();
+        }
+      });
+  }
+
+  addArticles() {
+    const id = uuidv4();
+    firebase.firestore().collection('currentHeadlines').doc(`${this.state.title}`)
+    .collection('articles').doc(`${id}`)
+    .set({
+      id,
+      headline: this.state.ranking,
+      url: this.state.heat,
+      imgurl: this.state.nOfComments,
+      time: (Math.floor(Date.now() / 1000))
+    });
   }
 
   renderTime() {
@@ -143,7 +214,7 @@ class NotifScreen extends Component {
           <TextInput
             value={this.state.ranking}
             style={styles.inputStyle}
-            placeholder={'Ranking'}
+            placeholder={'Ranking/headline'}
             onChangeText={(text) => this.setState({ ranking: text })}
           />
         </View>
@@ -151,7 +222,7 @@ class NotifScreen extends Component {
           <TextInput
             value={this.state.heat}
             style={styles.inputStyle}
-            placeholder={'heat'}
+            placeholder={'heat/url'}
             onChangeText={(text) => this.setState({ heat: text })}
           />
         </View>
@@ -159,7 +230,7 @@ class NotifScreen extends Component {
           <TextInput
             value={this.state.nOfComments}
             style={styles.inputStyle}
-            placeholder={'nOfComments'}
+            placeholder={'nOfComments/imgurl'}
             onChangeText={(text) => this.setState({ nOfComments: text })}
           />
         </View>
@@ -185,6 +256,22 @@ class NotifScreen extends Component {
             onPress={this.testFireUpdate.bind(this)}
           >
             <Text style={styles.buttonTextStyle}>Update Data?</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ paddingTop: 15 }}>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={this.migrateHeadlineData.bind(this)}
+          >
+            <Text style={styles.buttonTextStyle}>Migrate Data</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ paddingTop: 15 }}>
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            onPress={this.addArticles.bind(this)}
+          >
+            <Text style={styles.buttonTextStyle}>Add Article</Text>
           </TouchableOpacity>
         </View>
         {this.buttonResponse()}

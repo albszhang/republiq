@@ -22,10 +22,10 @@ class PostItem extends Component {
     super(props);
 
     const found = this.props.news_feed.find((e) => {
-      return e.title === this.props.item.topic;
+      console.log('newsfeedfind', e);
+      return e.title;
     });
 
-    //console.log('testing postitem newfeed data', found.title);
 
     this.state = {
       score: this.props.item.fullscore,
@@ -45,16 +45,12 @@ class PostItem extends Component {
 
   componentDidMount() {
     const { authed } = this.props;
-    //console.log('is this authed?', authed);
     if (authed) {
       this.checkVoted();
-      //this.retrieveRanking();
     }
-    console.log('THE STATE OF UPVOTES?AFTER', this.state.upvotes);
 
     this.checkUpvoteTF();
     this.checkDownvoteFT();
-    console.log('THE STATE OF UPVOTES?BEFORE', this.state.upvotes);
   }
 
   onUpvotePress() {
@@ -70,7 +66,7 @@ class PostItem extends Component {
         upvoted: false,
       });
       //this.props.upvotePressedTF({ documentId, upvotes });
-      console.log('stateUpvoes', stateUpvotes);
+      //console.log('stateUpvoes', stateUpvotes);
       this.props.upvotePressedTF({ documentId, stateUpvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     } else if (upvoted === false && downvoted === false) {
@@ -130,12 +126,6 @@ class PostItem extends Component {
       message: `Check out this super cool opinion from Republiq: "${this.props.item.content}"`,
       url: 'https://www.getrepubliq.com/'
     //  message: `${this.props.item.content}`
-    });
-  }
-
-  sortNews() {
-    const found = this.props.news_feed.find((e) => {
-      return e.title === this.props.item.topic;
     });
   }
 
@@ -495,7 +485,7 @@ const styles = {
   upvoteActiveText: {
     fontSize: 13,
     fontFamily: 'Avenir-Medium',
-    color: '#FF7C52',
+    color: '#5CAE5F',
     paddingLeft: 14,
     paddingRight: 14
   },
@@ -503,7 +493,7 @@ const styles = {
   downvoteActiveText: {
     fontSize: 13,
     fontFamily: 'Avenir-Medium',
-    color: '#6C8FE8',
+    color: '#FF7979',
     paddingLeft: 14,
     paddingRight: 14
   },

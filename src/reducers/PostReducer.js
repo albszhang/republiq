@@ -4,10 +4,11 @@ import {
   HEADLINE_SELECTED,
   POST_CLOSED,
   ALL_COLOR_CHANGED,
-  SOME_COLOR_CHANGED
+  SOME_COLOR_CHANGED,
+  DEFAULT_COLOR
 } from '../actions/types';
 
-const INITAL_STATE = {
+const INITIAL_STATE = {
   PostText: '',
   selectedHeadline: 'Select a Headline',
   headlineSelected: false,
@@ -22,7 +23,7 @@ const INITAL_STATE = {
   color: '#C9C9C9',
  };
 
-export default (state = INITAL_STATE, action) => {
+export default (state = INITIAL_STATE, action) => {
   //console.log('seeing if headlineselected is false', state);
   switch (action.type) {
     case POST_TEXT_CHANGED:
@@ -46,8 +47,10 @@ export default (state = INITAL_STATE, action) => {
         fontFamily: 'Avenir-Heavy',
         color: '#404040',
       };
+    case DEFAULT_COLOR:
+      return INITIAL_STATE;
     case POST_CLOSED:
-      return INITAL_STATE;
+      return INITIAL_STATE;
     default:
       return state;
   }

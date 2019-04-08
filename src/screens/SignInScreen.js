@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
 import {
-  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser,
+  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser, emptyInput
 } from '../actions';
 import LoginForm from '../components/LoginForm';
 
@@ -17,7 +17,7 @@ class SignInScreen extends Component {
     //console.log('component updated');
     if (this.props.user) {
       console.log('there exists a user');
-      this.props.navigation.navigate('AuthScreen');
+    //  this.props.navigation.navigate('SignInScreen');
     }
   }
 
@@ -58,41 +58,94 @@ class SignInScreen extends Component {
     return (
       <View style={container}>
 
-        <View style={inputContainerStyle}>
-          <TextInput
-            value={this.props.email}
-            style={inputStyle}
-            placeholder={'Email'}
-            onChangeText={this.onEmailChange.bind(this)}
-            autoCapitalize={'none'}
+        <View style={{ paddingTop: 48 }}>
+          <Image
+            style={{ width: 51, height: 51 }}
+            source={require('../img/sun.png')}
           />
         </View>
 
-        <View style={inputContainerStyle}>
-          <TextInput
-            secureTextEntry
-            autoCapitalize={'none'}
-            style={inputStyle}
-            placeholder={'Password'}
-            value={this.props.password}
-            onChangeText={this.onPasswordChange.bind(this)}
-          />
-        </View>
+        <Text
+          style={{
+            fontFamily: 'Avenir-Black',
+            fontSize: 30,
+            color: '#FF5339',
+            letterSpacing: -1,
+            //paddingLeft: 36,
+            paddingTop: 5,
+          }}
+        >Republiq</Text>
+        <Text
+          style={{
+            fontFamily: 'Avenir-LightOblique',
+            fontSize: 20,
+            color: '#FF5339',
+            letterSpacing: -1,
+            //paddingLeft: 36,
+            lineHeight: 25
+            //paddingTop: 5
+          }}
+        >Rediscover the news.</Text>
 
-        <View style={{ padding: 20 }}>
+        <View style={{ paddingTop: 12 }}>
           <View style={inputContainerStyle}>
             <TextInput
-              autoCapitalize={'none'}
+              value={this.props.email}
               style={inputStyle}
-              placeholder={'Username (only for signups)'}
-              value={this.props.username}
-              onChangeText={this.onUsernameChange.bind(this)}
+              placeholder={'Email'}
+              onChangeText={this.onEmailChange.bind(this)}
+              autoCapitalize={'none'}
+              autoCorrect={false}
             />
           </View>
         </View>
 
+        <View style={{ paddingTop: 12 }}>
+          <View style={inputContainerStyle}>
+            <TextInput
+              secureTextEntry
+              autoCapitalize={'none'}
+              style={inputStyle}
+              placeholder={'Password'}
+              value={this.props.password}
+              onChangeText={this.onPasswordChange.bind(this)}
+              autoCorrect={false}
+            />
+          </View>
+        </View>
+
+        <View style={{ paddingTop: 12 }}>
+          <View style={inputContainerStyle}>
+            <TextInput
+              autoCapitalize={'none'}
+              style={inputStyle}
+              placeholder={'Username'}
+              value={this.props.username}
+              onChangeText={this.onUsernameChange.bind(this)}
+              autoCorrect={false}
+            />
+          </View>
+        </View>
+
+      <TouchableOpacity
+        onPress={() => {
+          this.props.navigation.navigate('LogInScreen');
+          this.props.emptyInput();
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: 'Avenir-Roman',
+            fontSize: 14,
+            color: '#B8B8B8',
+            paddingTop: 10
+          }}
+        >Already have an account? Log in.</Text>
+      </TouchableOpacity>
+
         {this.renderError()}
 
+{/*
         <View style={{ paddingTop: 15 }}>
           <TouchableOpacity
             style={buttonStyle}
@@ -101,6 +154,7 @@ class SignInScreen extends Component {
             <Text style={buttonTextStyle}>Log in</Text>
           </TouchableOpacity>
         </View>
+*/}
 
         <View style={{ paddingTop: 15 }}>
           <TouchableOpacity
@@ -120,31 +174,31 @@ const styles = {
   container: {
     flex: 1,
     flexDirection: 'column',
-  //  justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 50
+    paddingLeft: 36,
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
 
   inputContainerStyle: {
-    height: 50,
+    //height: 15,
     width: 200,
-    paddingTop: 20,
-    paddingBottom: 20,
+    // paddingTop: 20,
+    // paddingBottom: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'black',
+    backgroundColor: '#ECECEC',
+    borderRadius: 3
   },
 
   inputStyle: {
     flex: 2,
-    height: 50,
-    color: '#4D4D4D',
+    height: 40,
+    color: '#353535',
     paddingTop: 5,
     paddingLeft: 10,
     paddingRight: 10,
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'Avenir-Book',
-    backgroundColor: '#ECECEC'
   },
 
   buttonStyle: {
@@ -174,5 +228,5 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, {
-  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser
+  emailChanged, passwordChanged, usernameChanged, loginUser, signupUser, emptyInput
 })(SignInScreen);

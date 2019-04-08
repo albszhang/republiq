@@ -12,7 +12,15 @@ import HeadlineItem from '../components/HeadlineItem';
 import SectionHeader from '../components/SectionHeader';
 import ButtonToPost from '../components/ButtonToPost';
 import {
-  PostChanged, PostCreate, PostClose, LoadPosts, RefreshPosts, LoadNews, LoadHeadlines
+  PostChanged,
+  PostCreate,
+  PostClose,
+  LoadNewestPosts,
+  LoadTopPosts,
+  RefreshPosts,
+  LoadNews,
+  LoadHeadlines,
+  DefaultColor
 } from '../actions';
 
 const Header = () => {
@@ -75,35 +83,12 @@ class HomeScreen extends Component {
       modalVisible: false,
       refresh: false,
       loading: false,
-
-      static_newsFeed: [
-        {
-          order: '1.',
-          headline: 'U.S. Government Shutdown'
-        },
-        {
-          order: '2.',
-          headline: 'Elizabeth Warren'
-        },
-        {
-          order: '3.',
-          headline: 'Mitt Romney Op-Ed'
-        },
-        {
-          order: '4.',
-          headline: 'Jazmine Barnes Shooting'
-        },
-        {
-          order: '5.',
-          headline: 'Trump Cabinet Meeting'
-        },
-      ],
     };
   }
 
   componentDidMount() {
     //Load Feed
-    this.loadFeed();
+    this.loadFeed('TOP');
   }
 
   onClosePostModal() {
@@ -114,7 +99,7 @@ class HomeScreen extends Component {
     this.setState({ modalVisible: visible });
   }
 
-  loadFeed = () => {
+  loadFeed = (sortMethod) => {
     this.setState({
       refresh: true,
       loading: true
@@ -122,8 +107,12 @@ class HomeScreen extends Component {
     });
 
     this.props.RefreshPosts(); //empties the post_feed action state
+    if (sortMethod === 'NEWEST') {
+      this.props.LoadNewestPosts();
+    } else if (sortMethod === 'TOP') {
+      this.props.LoadTopPosts();
+    }
     this.props.LoadNews();
-    this.props.LoadPosts();
     this.props.LoadHeadlines();
 
     this.setState({
@@ -132,9 +121,9 @@ class HomeScreen extends Component {
     });
   }
 
-  loadNew = () => {
+  loadNew = (sortMethod) => {
     //Load Feed
-    this.loadFeed();
+    this.loadFeed(sortMethod);
   }
 
   renderHead() {
@@ -156,10 +145,12 @@ class HomeScreen extends Component {
             }}
           />
         ) : (
-          <View>
+          <View style={{ flex: 1 }}>
             <SectionList
               refreshing={this.state.refresh}
-              onRefresh={this.loadNew}
+              onRefresh={() => {
+                this.loadNew(this.props.sortMethod);
+              }}
               sections={[
                 { title: 'HEADLINES',
                   //data: this.state.static_newsFeed,
@@ -179,7 +170,10 @@ class HomeScreen extends Component {
                 <PostItem index={index} item={item} navigation={this.props.navigation} />
               )}
               renderSectionHeader={({ section }) => (
-                <SectionHeader section={section} />
+                <SectionHeader
+                  section={section}
+                  refresh={(sortMethod) => { this.loadFeed(sortMethod); }}
+                />
               )}
               ListHeaderComponent={this.renderHead}
               keyExtractor={(item, index) => index.toString()}
@@ -201,9 +195,11 @@ class HomeScreen extends Component {
           }}
           postAction={() => {
             this.setModalVisible(!this.state.modalVisible);
-            console.log('postaction', this.props.selectedHeadline);
+            //console.log('postaction', this.props.selectedHeadline);
             const { post, username, selectedHeadline } = this.props;
             this.props.PostCreate({ post, username, selectedHeadline });
+            this.props.DefaultColor();
+            this.loadFeed();
           }}
         />
 
@@ -306,6 +302,7 @@ const mapStateToProps = (state) => {
     post_vote_info: state.feed.post_vote_info,
     news_feed: state.feed.news_feed,
     username: state.auth.user.displayName,
+    sortMethod: state.sort.sortMethod
   };
 };
 
@@ -314,8 +311,10 @@ export default connect(mapStateToProps, {
   PostCreate,
   PostClose,
   RefreshPosts,
-  LoadPosts,
+  LoadNewestPosts,
+  LoadTopPosts,
   LoadHeadlines,
-  LoadNews
+  LoadNews,
+  DefaultColor
 })(HomeScreen);
 //export default HomeScreen;
