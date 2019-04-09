@@ -22,10 +22,10 @@ class PostItem extends Component {
   constructor(props) {
     super(props);
 
-    console.log('through post item', this.props.news_feed);
+    console.log('through post item', this.props.profile);
     //console.log('through props', this.props.news);
-    if (this.props.news_feed.length === 0) {
-      console.log('hello?');
+    if (this.props.profile) {
+      console.log('helloprofile?');
       this.state = {
         score: this.props.item.fullscore,
         upvotes: this.props.item.upvotes,
@@ -43,7 +43,27 @@ class PostItem extends Component {
         nOfComments: '',
         nOfArticles: ''
       };
-    } else {
+    }
+    if (this.props.news_feed.length === 0) {
+      console.log('hellonewslength?');
+      this.state = {
+        score: this.props.item.fullscore,
+        upvotes: this.props.item.upvotes,
+        downvotes: this.props.item.downvotes,
+        upvoted: this.props.item.upvoted,
+        downvoted: this.props.item.downvoted,
+
+        displayUpvotes: this.props.item.upvotes,
+        displayDownvotes: this.props.item.downvotes,
+
+        //news data
+        title: '',
+        ranking: '',
+        heat: '',
+        nOfComments: '',
+        nOfArticles: ''
+      };
+    } else if (this.props.news_feed.length > 0 && !this.props.profile) {
       console.log('else');
       const found = this.props.news_feed.find((e) => {
         console.log('e.title');
@@ -385,14 +405,25 @@ class PostItem extends Component {
           <TouchableOpacity
             style={{ flexDirection: 'row' }}
             onPress={() => {
-              navigation.navigate('News', {
-                title: this.state.title,
-                ranking: this.state.ranking,
-                heat: this.state.heat,
-                nOfArticles: this.state.nOfArticles,
-                nOfComments: this.state.nOfComments
-              });
-              this.props.LoadHeadlines();
+              if (this.state.title.length > 0) {
+                navigation.navigate('News', {
+                  title: this.state.title,
+                  ranking: this.state.ranking,
+                  heat: this.state.heat,
+                  nOfArticles: this.state.nOfArticles,
+                  nOfComments: this.state.nOfComments
+                });
+                this.props.LoadHeadlines();
+              } else {
+                Alert.alert(
+                  `${this.props.item.topic}`,
+                  'This is an old headline, and is currently inaccessible. We are working on it!',
+                  [
+                    { text: 'OK', onPress: () => console.log('Ask me later pressed') }
+                  ],
+                  { cancelable: false },
+                );
+              }
             }}
           >
             {/*

@@ -171,6 +171,7 @@ class HomeScreen extends Component {
                   index={index}
                   item={item}
                   navigation={this.props.navigation}
+                  profile={false}
                   //news={this.props.news_feed}
                 />
               )}

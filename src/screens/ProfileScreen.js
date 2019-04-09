@@ -122,7 +122,12 @@ class ProfileScreen extends Component {
               onRefresh={this.loadNew}
               data={this.props.post_profile_feed}
               renderItem={({ item, index }) => (
-                <PostItem index={index} item={item} navigation={this.props.navigation} />
+                <PostItem
+                  index={index}
+                  item={item}
+                  navigation={this.props.navigation}
+                  profile={true}
+                />
               )}
               keyExtractor={(item, index) => index.toString()}
             />
@@ -186,7 +191,12 @@ class ProfileScreen extends Component {
               onRefresh={this.loadNew}
               data={this.props.post_profile_feed}
               renderItem={({ item, index }) => (
-                <PostItem index={index} item={item} navigation={this.props.navigation} />
+                <PostItem
+                  index={index}
+                  item={item}
+                  navigation={this.props.navigation}
+                  profile
+                />
               )}
               keyExtractor={(item, index) => index.toString()}
             />
