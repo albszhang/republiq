@@ -21,6 +21,7 @@ import {
 class PostItem extends Component {
   constructor(props) {
     super(props);
+
     console.log('through post item', this.props.news_feed);
     //console.log('through props', this.props.news);
     if (this.props.news_feed.length === 0) {
@@ -31,6 +32,9 @@ class PostItem extends Component {
         downvotes: this.props.item.downvotes,
         upvoted: this.props.item.upvoted,
         downvoted: this.props.item.downvoted,
+
+        displayUpvotes: this.props.item.upvotes,
+        displayDownvotes: this.props.item.downvotes,
 
         //news data
         title: '',
@@ -51,6 +55,9 @@ class PostItem extends Component {
         downvotes: this.props.item.downvotes,
         upvoted: this.props.item.upvoted,
         downvoted: this.props.item.downvoted,
+
+        displayUpvotes: this.props.item.upvotes,
+        displayDownvotes: this.props.item.downvotes,
 
         //news data
         title: found.title,
@@ -97,6 +104,7 @@ class PostItem extends Component {
       this.setState({
         score: score - 1,
         upvoted: false,
+        displayUpvotes: this.state.displayUpvotes - 1
       });
       //this.props.upvotePressedTF({ documentId, upvotes });
       //console.log('stateUpvoes', stateUpvotes);
@@ -106,7 +114,7 @@ class PostItem extends Component {
       this.setState({
         score: score + 1,
         upvoted: true,
-        //upvotes: upvotes + 1
+        displayUpvotes: this.state.displayUpvotes + 1
       });
       //this.props.upvotePressedFF({ documentId, upvotes });
       this.props.upvotePressedFF({ documentId, stateUpvotes });
@@ -116,6 +124,8 @@ class PostItem extends Component {
         score: score + 2,
         upvoted: true,
         downvoted: false,
+        displayUpvotes: this.state.displayUpvotes + 1,
+        displayDownvotes: this.state.displayDownvotes - 1
       });
       this.props.upvotePressedFT({ documentId, stateUpvotes, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
@@ -132,21 +142,25 @@ class PostItem extends Component {
       this.setState({
         score: score - 2,
         upvoted: false,
-        downvoted: true
+        downvoted: true,
+        displayUpvotes: this.state.displayUpvotes - 1,
+        displayDownvotes: this.state.displayDownvotes + 1
       });
       this.props.downvotePressedTF({ documentId, stateUpvotes, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     } else if (upvoted === false && downvoted === false) {
       this.setState({
         score: score - 1,
-        downvoted: true
+        downvoted: true,
+        displayDownvotes: this.state.displayDownvotes + 1
       });
       this.props.downvotePressedFF({ documentId, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
     } else if (upvoted === false && downvoted) {
       this.setState({
         score: score + 1,
-        downvoted: false
+        downvoted: false,
+        displayDownvotes: this.state.displayDownvotes - 1
       });
       this.props.downvotePressedFT({ documentId, stateDownvotes });
       Haptic.impact(Haptic.ImpactFeedbackStyle.Light);
@@ -218,7 +232,7 @@ class PostItem extends Component {
             />
           </TouchableOpacity>
 
-          <Text style={styles.upvoteActiveText}>{this.state.score}</Text>
+          <Text style={styles.upvoteActiveText}>{this.state.displayUpvotes}</Text>
 
           <TouchableOpacity
             style={{ width: 27, height: 14.4, justifyContent: 'center', alignItems: 'center' }}
@@ -229,6 +243,8 @@ class PostItem extends Component {
               source={require('../img/postButtons/downvote.png')}
             />
           </TouchableOpacity>
+
+          <Text style={styles.upvoteText}>{this.state.displayDownvotes}</Text>
 
         </View>
       );
@@ -245,7 +261,7 @@ class PostItem extends Component {
             />
           </TouchableOpacity>
 
-          <Text style={styles.downvoteActiveText}>{this.state.score}</Text>
+          <Text style={styles.upvoteText}>{this.state.displayUpvotes}</Text>
 
           <TouchableOpacity
             style={styles.upvoteFormat}
@@ -256,6 +272,8 @@ class PostItem extends Component {
               source={require('../img/postButtons/downvoteActive.png')}
             />
           </TouchableOpacity>
+
+          <Text style={styles.downvoteActiveText}>{this.state.displayDownvotes}</Text>
         </View>
       );
     }
@@ -271,8 +289,8 @@ class PostItem extends Component {
             />
           </TouchableOpacity>
 
-          <Text style={styles.upvoteText}>{this.state.score}</Text>
-
+          {/* <Text style={styles.upvoteText}>{this.state.score}</Text> */}
+          <Text style={styles.upvoteText}> </Text>
           <TouchableOpacity
             style={styles.upvoteFormat}
             onPress={this.onDownvotePress.bind(this)}
@@ -324,6 +342,36 @@ class PostItem extends Component {
           <Text style={styles.infoText}>{item.timestamp}</Text>
         </View>
       );
+  }
+
+  renderColorRatio() {
+    const total = this.state.displayUpvotes + this.state.displayDownvotes;
+    const uRatio = this.state.displayUpvotes / total;
+    const dRatio = this.state.displayDownvotes / total;
+    if (this.state.upvoted || this.state.downvoted) {
+      return (
+        <View style={{ height: 3, flexDirection: 'row' }}>
+          <View
+            style={{
+              // flex: u / (u + d),
+              flex: uRatio,
+              backgroundColor: '#5CAE5F'
+            }}
+          />
+          <View
+            style={{
+              // flex: d / (u + d),
+              flex: dRatio,
+              backgroundColor: '#FF7979'
+            }}
+          />
+        </View>
+      );
+    } else {
+      return (
+        <View style={{ height: 3, backgroundColor: '#E4E4E4' }} />
+      );
+    }
   }
 
   render() {
@@ -441,8 +489,9 @@ class PostItem extends Component {
             </TouchableOpacity>
 
           </View>
-
         </View>
+
+        {this.renderColorRatio()}
       </View>
     );
   }
