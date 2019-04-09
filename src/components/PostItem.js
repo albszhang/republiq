@@ -12,6 +12,7 @@ import {
   downvotePressedFF,
   downvotePressedFT,
 
+  LoadNews,
   LoadHeadlines,
 } from '../actions';
 
@@ -20,27 +21,45 @@ import {
 class PostItem extends Component {
   constructor(props) {
     super(props);
+    console.log('through post item', this.props.news_feed);
+    //console.log('through props', this.props.news);
+    if (this.props.news_feed.length === 0) {
+      console.log('hello?');
+      this.state = {
+        score: this.props.item.fullscore,
+        upvotes: this.props.item.upvotes,
+        downvotes: this.props.item.downvotes,
+        upvoted: this.props.item.upvoted,
+        downvoted: this.props.item.downvoted,
 
-    const found = this.props.news_feed.find((e) => {
-      console.log('newsfeedfind', e);
-      return e.title;
-    });
+        //news data
+        title: '',
+        ranking: '',
+        heat: '',
+        nOfComments: '',
+        nOfArticles: ''
+      };
+    } else {
+      console.log('else');
+      const found = this.props.news_feed.find((e) => {
+        console.log('e.title');
+        return e.title === this.props.item.topic;
+      });
+      this.state = {
+        score: this.props.item.fullscore,
+        upvotes: this.props.item.upvotes,
+        downvotes: this.props.item.downvotes,
+        upvoted: this.props.item.upvoted,
+        downvoted: this.props.item.downvoted,
 
-
-    this.state = {
-      score: this.props.item.fullscore,
-      upvotes: this.props.item.upvotes,
-      downvotes: this.props.item.downvotes,
-      upvoted: this.props.item.upvoted,
-      downvoted: this.props.item.downvoted,
-
-      //news data
-      title: found.title,
-      ranking: found.ranking,
-      heat: found.heat,
-      nOfComments: found.nOfComments,
-      nOfArticles: found.nOfArticles
-    };
+        //news data
+        title: found.title,
+        ranking: found.ranking,
+        heat: found.heat,
+        nOfComments: found.nOfComments,
+        nOfArticles: found.nOfArticles
+      };
+    }
   }
 
   componentDidMount() {
@@ -52,6 +71,20 @@ class PostItem extends Component {
     this.checkUpvoteTF();
     this.checkDownvoteFT();
   }
+
+  // componentDidUpdate() {
+  //   const found = this.props.news_feed.find((e) => {
+  //     console.log('e.title');
+  //     return e.title === this.props.item.topic;
+  //   });
+  //   this.setState({
+  //     title: found.title,
+  //     ranking: found.ranking,
+  //     heat: found.heat,
+  //     nOfComments: found.nOfComments,
+  //     nOfArticles: found.nOfArticles
+  //   });
+  // }
 
   onUpvotePress() {
     const { documentId, upvotes, downvotes } = this.props.item;
@@ -529,5 +562,6 @@ export default connect(mapStateToProps, {
   downvotePressedFF,
   downvotePressedFT,
 
+  LoadNews,
   LoadHeadlines
 })(PostItem);

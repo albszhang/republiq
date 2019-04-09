@@ -27,6 +27,7 @@ class HeadlineItem extends Component {
         <TouchableOpacity
           style={styles.headlineContainerStyle}
           onPress={() => {
+            console.log('make it this far?');
             navigation.navigate('News', {
               title: item.title,
               ranking: item.ranking,
@@ -35,7 +36,7 @@ class HeadlineItem extends Component {
               nOfComments: item.nOfComments
           });
           this.props.LoadHeadlines();
-          console.log('getting to the bottom of headlineItem', this.props.headlines);
+          console.log('getting to the bottom of headlineItem', this.props.item.title);
         }}
         >
           <View style={styles.innerStyle}>

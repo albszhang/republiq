@@ -87,7 +87,7 @@ class HomeScreen extends Component {
   }
 
   componentDidMount() {
-    //Load Feed
+    //Load Feed'
     this.loadFeed('TOP');
   }
 
@@ -107,12 +107,12 @@ class HomeScreen extends Component {
     });
 
     this.props.RefreshPosts(); //empties the post_feed action state
+    this.props.LoadNews();
     if (sortMethod === 'NEWEST') {
       this.props.LoadNewestPosts();
     } else if (sortMethod === 'TOP') {
       this.props.LoadTopPosts();
     }
-    this.props.LoadNews();
     this.props.LoadHeadlines();
 
     this.setState({
@@ -167,7 +167,12 @@ class HomeScreen extends Component {
                 { title: 'DISCUSSION', data: this.props.post_feed }
               ]}
               renderItem={({ item, index }) => (
-                <PostItem index={index} item={item} navigation={this.props.navigation} />
+                <PostItem
+                  index={index}
+                  item={item}
+                  navigation={this.props.navigation}
+                  //news={this.props.news_feed}
+                />
               )}
               renderSectionHeader={({ section }) => (
                 <SectionHeader

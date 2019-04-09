@@ -124,13 +124,11 @@ class NewsHeader extends Component {
 
   render() {
     //const { navigation } = this.props;
-    console.log('UNDEFINED?', this.props.navigation.getParam('title'));
     const title = this.props.navigation.getParam('title');
     const ranking = this.props.navigation.getParam('ranking');
     const heat = this.props.navigation.getParam('heat');
     const nOfArticles = this.props.navigation.getParam('nOfArticles');
     const nOfComments = this.props.navigation.getParam('nOfComments');
-    console.log('navprops in newsheader success?', nOfArticles);
     return (
       <View style={styles.headerContainerStyle}>
         {/* <View style={{ paddingLeft: 20, }}>*/}

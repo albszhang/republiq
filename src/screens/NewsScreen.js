@@ -50,11 +50,9 @@ class NewsScreen extends Component {
     this.setState({
       refresh: true,
     });
-    console.log('TITLE?', this.props.navigation.getParam('title'));
     this.props.RefreshPosts(); //empties the post_feed action state
     this.props.LoadNews();
     this.props.LoadArticles(this.props.navigation.getParam('title'));
-
     //homepage feed loading
     if (sortMethod === 'NEWEST') {
       this.props.LoadNewestPosts();
@@ -118,7 +116,12 @@ class NewsScreen extends Component {
                 { title: 'DISCUSSION', data: this.props.post_specific_feed }
               ]}
               renderItem={({ item, index, section }) => (
-                <PostItem index={index} item={item} navigation={this.props.navigation} />
+                <PostItem
+                index={index}
+                item={item}
+                navigation={this.props.navigation}
+                //news={this.props.news_feed}
+                />
               )}
               renderSectionHeader={({ section }) => (
                 <SectionHeader
@@ -200,6 +203,7 @@ const mapStateToProps = (state) => {
     post: state.post.PostText,
     username: state.auth.user.displayName,
     selectedHeadline: state.post.selectedHeadline,
+    sortMethod: state.sort.sortMethod,
   };
 };
 
