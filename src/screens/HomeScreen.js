@@ -205,7 +205,7 @@ class HomeScreen extends Component {
             const { post, username, selectedHeadline } = this.props;
             this.props.PostCreate({ post, username, selectedHeadline });
             this.props.DefaultColor();
-            this.loadFeed();
+            this.loadFeed(this.props.sortMethod);
           }}
         />
 

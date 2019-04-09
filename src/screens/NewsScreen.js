@@ -79,9 +79,9 @@ class NewsScreen extends Component {
     this.loadFeed(sortMethod);
 
     // THIS UPDATES THE COMMENTS - STICK IT SOMEWHERE ELSE THO
-    // const nOfComments = this.props.post_specific_feed.length;
-    // const title = this.props.navigation.getParam('title');
-    // this.props.UpdateComments({ nOfComments, title });
+    const nOfComments = this.props.post_specific_feed.length;
+    const title = this.props.navigation.getParam('title');
+    this.props.UpdateComments({ nOfComments, title });
   }
 
   navProps(prop) {
@@ -155,7 +155,7 @@ class NewsScreen extends Component {
           const { post, username, selectedHeadline } = this.props;
           this.props.PostCreate({ post, username, selectedHeadline });
           this.props.DefaultColor();
-          this.loadFeed();
+          this.loadFeed(this.props.sortMethod);
         }}
       />
 
