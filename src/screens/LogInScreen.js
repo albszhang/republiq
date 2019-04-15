@@ -6,15 +6,20 @@ import { withNavigation } from 'react-navigation';
 import {
   emailChanged, passwordChanged, usernameChanged, loginUser, signupUser, emptyInput
 } from '../actions';
+import LoginForm from '../components/LoginForm';
 
-class LogInScreen extends Component {
-  // componentDidUpdate() {
-  //   //console.log('component updated');
-  //   if (this.props.user) {
-  //     console.log('there exists a user');
-  //     //this.props.navigation.navigate('AuthScreen');
-  //   }
-  // }
+class SignInScreen extends Component {
+  static navigationOptions = {
+    title: 'Sign In'
+  };
+
+  componentDidUpdate() {
+    //console.log('component updated');
+    if (this.props.user) {
+      console.log('there exists a user');
+    //  this.props.navigation.navigate('SignInScreen');
+    }
+  }
 
   onEmailChange(text) {
     this.props.emailChanged(text);
@@ -28,16 +33,32 @@ class LogInScreen extends Component {
     this.props.usernameChanged(text);
   }
 
+//part of the firebase auth scrappy solution - it checks whether there is Already
+//an email, and if so, it puts in the email into the action. if the username
+//isn't an email, it will concatenate the @email.com at the end so firebase
+//recognizes it.
+//-- this solution ensure there is minimal change to the signin/login actions in
+//OtherActions.js
   onLoginButtonPress() {
-    console.log('LoginButton Pressed');
-    const { email, password, navigation } = this.props;
+    const { password, navigation } = this.props;
+    if (this.props.username.includes('@')) {
+      const email = this.props.username;
+      this.props.loginUser({ email, password, navigation });
+    } else {
+      const email = `${this.props.username}@email.com`;
+      console.log(email);
+      this.props.loginUser({ email, password, navigation });
+    }
 
-    this.props.loginUser({ email, password, navigation });
     //this.props.navigation.navigate('App');
   }
 
   onSignupButtonPress() {
-    const { email, password, username, navigation } = this.props;
+    const { username, password, navigation } = this.props;
+    const email = `${username}@email.com`;
+    //this is not the actual email field, this is a fake email made from username
+    //currently, Firebase auth only takes emails as the username, so this is
+    // a really scrappy solution, that adds a default @email.com
     this.props.signupUser({ email, password, username, navigation });
   }
 
@@ -52,10 +73,27 @@ class LogInScreen extends Component {
 
     return (
       <View style={container}>
+        <View style={{ paddingTop: 35, alignItems: 'flex-end', paddingRight: 35 }}>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.navigate('SignInScreen');
+              this.props.emptyInput();
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: 'Avenir-Roman',
+                fontSize: 15,
+                color: '#B8B8B8',
+                paddingTop: 10
+              }}
+            >Sign Up.</Text>
+          </TouchableOpacity>
+        </View>
 
-        <View style={{ paddingTop: 48 }}>
+        <View style={{ paddingTop: 93 }}>
           <Image
-            style={{ width: 51, height: 51 }}
+            style={{ width: 45, height: 45 }}
             source={require('../img/sun.png')}
           />
         </View>
@@ -69,27 +107,17 @@ class LogInScreen extends Component {
             //paddingLeft: 36,
             paddingTop: 5,
           }}
-        >Republiq</Text>
-        <Text
-          style={{
-            fontFamily: 'Avenir-LightOblique',
-            fontSize: 20,
-            color: '#FF5339',
-            letterSpacing: -1,
-            //paddingLeft: 36,
-            lineHeight: 25
-            //paddingTop: 5
-          }}
-        >Rediscover the news.</Text>
+        >Log In</Text>
 
         <View style={{ paddingTop: 12 }}>
           <View style={inputContainerStyle}>
             <TextInput
-              value={this.props.email}
-              style={inputStyle}
-              placeholder={'Email'}
-              onChangeText={this.onEmailChange.bind(this)}
               autoCapitalize={'none'}
+              selectionColor={'#FF5353'}
+              style={inputStyle}
+              placeholder={'Username'}
+              value={this.props.username}
+              onChangeText={this.onUsernameChange.bind(this)}
               autoCorrect={false}
             />
           </View>
@@ -100,6 +128,7 @@ class LogInScreen extends Component {
             <TextInput
               secureTextEntry
               autoCapitalize={'none'}
+              selectionColor={'#FF5353'}
               style={inputStyle}
               placeholder={'Password'}
               value={this.props.password}
@@ -109,44 +138,16 @@ class LogInScreen extends Component {
           </View>
         </View>
 
-      <TouchableOpacity
-        onPress={() => {
-          this.props.navigation.navigate('SignInScreen');
-          this.props.emptyInput();
-        }}
-      >
-        <Text
-          style={{
-            fontFamily: 'Avenir-Roman',
-            fontSize: 14,
-            color: '#B8B8B8',
-            paddingTop: 10
-          }}
-        >Don't have an account? Sign up!</Text>
-      </TouchableOpacity>
-
         {this.renderError()}
-
 
         <View style={{ paddingTop: 15 }}>
           <TouchableOpacity
             style={buttonStyle}
             onPress={this.onLoginButtonPress.bind(this)}
           >
-            <Text style={buttonTextStyle}>Log in</Text>
+            <Text style={buttonTextStyle}>Log Up</Text>
           </TouchableOpacity>
         </View>
-
-{/*
-        <View style={{ paddingTop: 15 }}>
-          <TouchableOpacity
-            style={buttonStyle}
-            onPress={this.onSignupButtonPress.bind(this)}
-          >
-            <Text style={buttonTextStyle}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-        */}
 
       </View>
     );
@@ -163,14 +164,11 @@ const styles = {
   },
 
   inputContainerStyle: {
-    //height: 15,
-    width: 200,
-    // paddingTop: 20,
-    // paddingBottom: 20,
+    width: 250,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ECECEC',
-    borderRadius: 3
+    borderBottomWidth: 0.5,
+    borderColor: '#E0E0E0'
   },
 
   inputStyle: {
@@ -178,9 +176,8 @@ const styles = {
     height: 40,
     color: '#353535',
     paddingTop: 5,
-    paddingLeft: 10,
     paddingRight: 10,
-    fontSize: 16,
+    fontSize: 24,
     fontFamily: 'Avenir-Book',
   },
 
@@ -212,4 +209,4 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   emailChanged, passwordChanged, usernameChanged, loginUser, signupUser, emptyInput
-})(LogInScreen);
+})(SignInScreen);

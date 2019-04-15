@@ -3,23 +3,7 @@ import firebase from 'firebase';
 import 'firebase/firestore';
 
 import {
-  IS_INITIALIZED,
-  NOT_INITIALIZED,
-  IS_AUTHENTICATED,
-  NOT_AUTHENTICATED,
-
   POST_TEXT_CHANGED,
-  EMAIL_CHANGED,
-  PASSWORD_CHANGED,
-  USERNAME_CHANGED,
-
-  LOGIN_USER_SUCCESS,
-  SIGNUP_USER_SUCCESS,
-  AUTH_USER_FAIL,
-  EMPTY_INPUT,
-  EMAIL_EXISTS_ERROR,
-  USERNAME_EXISTS_ERROR,
-
 
   POST_CREATED,
   HEADLINE_SELECTED,
@@ -31,147 +15,56 @@ import {
   UPVOTE_PRESSED,
   DOWNVOTE_PRESSED,
 
-  // LOAD_POSTS,
-  // LOAD_ARTICLES,
-  // // LOAD_POST_VOTED,
-  // LOAD_PROFILE_POSTS,
-  // LOAD_SPECIFIC_POSTS,
-  // LOAD_NEWS,
-  // LOAD_HEADLINES,
-  // REFRESH_POSTS,
-
   LOAD_PROFILE_AGE,
   REFRESH_PROF_POSTS,
 
   UPDATE_COMMENTS,
 
   //for the sorting modal in ordering the posts (by upvotes or by timestamp)
-  SORT_METHOD_SELECTED
+  SORT_METHOD_SELECTED,
+
+  LAST_UPDATED,
 } from './types';
 
 //checking if things are isInitialized
-
-export const isInitialized = () => {
-  return {
-    type: IS_INITIALIZED
-  };
+pluralCheck = (s) => {
+  if (s === 1) {
+    return ' ago';
+  }
+  return 's ago';
 };
 
-export const notInitialized = () => {
-  return {
-    type: NOT_INITIALIZED
-  };
-};
+timeConverter = (timestamp) => {
+  const a = new Date(timestamp * 1000);
+  const seconds = Math.floor((new Date() - a) / 1000);
 
-//Authentication ---------
+  let interval = Math.floor(seconds / 31536000);
 
-export const isAuthenticated = (user) => {
-  return {
-    type: IS_AUTHENTICATED,
-    payload: user
-  };
-};
-
-export const notAuthenticated = () => {
-  return {
-    type: NOT_AUTHENTICATED,
-    payload: false
-  };
-};
-
-export const passwordChanged = (text) => {
-  return {
-    type: PASSWORD_CHANGED,
-    payload: text
-  };
-};
-
-export const emailChanged = (text) => {
-  return {
-    type: EMAIL_CHANGED,
-    payload: text
-  };
-};
-
-export const usernameChanged = (text) => {
-  return {
-    type: USERNAME_CHANGED,
-    payload: text
-  };
-};
-
-export const emptyInput = () => {
-  return {
-    type: EMPTY_INPUT
-  };
-};
-
-export const loginUser = ({ email, password, navigation }) => {
-  return (dispatch) => {
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(() => {
-        //navigation.navigate('App');
-        //console.log(firebase.auth().currentUser);
-        dispatch({ type: LOGIN_USER_SUCCESS, payload: firebase.auth().currentUser });
-      })
-      .catch(() => authUserFail(dispatch));
-  };
-};
-
-export const signupUser = ({ email, password, username, navigation }) => {
-  return (dispatch) => {
-    firebase.firestore().collection('users')
-      .where('email', '==', email)
-      .get()
-      .then((snapshot) => {
-        //-----------IS THERE A EMAIL ALREADY?-------
-        if (snapshot.empty) {
-          firebase.firestore().collection('users')
-            .where('username', '==', username)
-            .get()
-            .then((snapshot2) => {
-              //-----------IS THERE A USERNAME?-------
-              if (snapshot2.empty) {
-                //-----------SIGN IN USER-------
-                firebase.auth().createUserWithEmailAndPassword(email, password)
-                //see https://stackoverflow.com/questions/38559457/firebase-v3-updateprofile-method
-                .then(() => {
-                  const user = firebase.auth().currentUser;
-                  user.updateProfile({ displayName: username });
-                })
-                .then(() => {
-                  const currentUser = firebase.auth().currentUser;
-                  firebase.firestore().collection('users').doc(currentUser.uid).set({
-                    uid: currentUser.uid,
-                    username,
-                    email,
-                    originDate: Date.now()
-                  });
-                })
-                .then(() => {
-                  navigation.navigate('App');
-                  dispatch({ type: SIGNUP_USER_SUCCESS, payload: firebase.auth().currentUser });
-                })
-                .catch(() => authUserFail(dispatch));
-              } else if (!snapshot2.empty) {
-                dispatch({
-                  type: USERNAME_EXISTS_ERROR
-                });
-              }
-            });
-        } else if (!snapshot.empty) {
-          dispatch({
-            type: EMAIL_EXISTS_ERROR
-          });
-        }
-      })
-    .catch(error => console.log('check emailusername error', error));
-  };
-};
-
-
-export const authUserFail = (dispatch) => {
-  dispatch({ type: AUTH_USER_FAIL });
+  if (interval >= 1) {
+    return `${interval} year${this.pluralCheck(interval)}`;
+  }
+  interval = Math.floor(seconds / 2592000);
+  if (interval >= 1) {
+    return `${interval} month${this.pluralCheck(interval)}`;
+  }
+  // ----IF YOU WANT WEEKS----
+  // interval = Math.floor(seconds / 604800);
+  // if (interval >= 1) {
+  //   return `${interval} week${this.pluralCheck(interval)}`;
+  // }
+  interval = Math.floor(seconds / 86400);
+  if (interval >= 1) {
+    return `${interval} day${this.pluralCheck(interval)}`;
+  }
+  interval = Math.floor(seconds / 3600);
+  if (interval >= 1) {
+    return `${interval} hr${this.pluralCheck(interval)}`;
+  }
+  interval = Math.floor(seconds / 60);
+  if (interval >= 1) {
+    return `${interval} min${this.pluralCheck(interval)}`;
+  }
+  return `${Math.floor(seconds)} second${this.pluralCheck(interval)}`;
 };
 
 
@@ -457,5 +350,20 @@ export const SortMethodSelected = (sortMethod) => {
   return {
     type: SORT_METHOD_SELECTED,
     payload: sortMethod
+  };
+};
+
+export const LastUpdated = () => {
+  return (dispatch) => {
+    firebase.firestore().collection('miscData').doc('lastUpdated')
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        dispatch({
+          type: LAST_UPDATED,
+          payload: this.timeConverter(doc.data().time)
+        });
+      }
+    });
   };
 };

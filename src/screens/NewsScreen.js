@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, SectionList, TouchableOpacity, Image, Alert } from 'react-native';
 import { connect } from 'react-redux';
+import firebase from 'firebase';
 
 import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostItem from '../components/PostItem';
@@ -12,6 +13,7 @@ import {
   PostCreate,
   RefreshPosts,
   LoadNews,
+  LoadHeadlines,
   LoadNewestPosts,
   LoadTopPosts,
   //LoadSpecificPosts,
@@ -35,7 +37,7 @@ class NewsScreen extends Component {
 
   componentDidMount() {
     //Load Feed
-    this.loadFeed('TOP');
+    this.loadFeed(this.props.sortMethod);
   }
 
   onClosePostModal() {
@@ -59,6 +61,7 @@ class NewsScreen extends Component {
     } else if (sortMethod === 'TOP') {
       this.props.LoadTopPosts();
     }
+    this.props.LoadHeadlines();
 
     //newspage feed loading
     if (sortMethod === 'NEWEST') {
@@ -78,10 +81,13 @@ class NewsScreen extends Component {
     //Load Feed
     this.loadFeed(sortMethod);
 
-    // THIS UPDATES THE COMMENTS - STICK IT SOMEWHERE ELSE THO
-    const nOfComments = this.props.post_specific_feed.length;
-    const title = this.props.navigation.getParam('title');
-    this.props.UpdateComments({ nOfComments, title });
+    // THIS UPDATES THE COMMENTS - STICK IT0 SOMEWHERE ELSE THO
+    // console.log(firebase.auth().currentUser.uid);
+    if (firebase.auth().currentUser.uid === 'vuD6bmG45tV2sbb7xA4wLf3qO8p1') {
+      const nOfComments = this.props.post_specific_feed.length;
+      const title = this.props.navigation.getParam('title');
+      this.props.UpdateComments({ nOfComments, title });
+    }
   }
 
   navProps(prop) {
@@ -157,6 +163,7 @@ class NewsScreen extends Component {
           this.props.DefaultColor();
           this.loadFeed(this.props.sortMethod);
         }}
+        autoHeadline={this.props.navigation.getParam('title')}
       />
 
       {/* Button to Post */}
@@ -213,6 +220,7 @@ export default connect(mapStateToProps, {
   PostCreate,
   RefreshPosts,
   LoadNews,
+  LoadHeadlines,
   LoadNewestPosts,
   LoadTopPosts,
   LoadNewestSpecificPosts,

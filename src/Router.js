@@ -18,11 +18,13 @@ import SignInScreen from './screens/SignInScreen';
 import LogInScreen from './screens/LogInScreen';
 import NewsScreen from './screens/NewsScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import OnboardingScreen from './screens/OnboardingScreen';
 import { isAuthenticated, notAuthenticated } from './actions';
 
 const AuthStack = createStackNavigator(
   {
     //property shorthand, originally SignInScreen: SignInScreen, or AuthScreen: SignInScreen
+    OnboardingScreen, 
     SignInScreen,
     LogInScreen
 
@@ -55,7 +57,7 @@ const AppStackNavigator = createBottomTabNavigator(
     Profile: {
       screen: ProfileScreen
     },
-
+    //
     // Notif: {
     //   screen: NotifScreen
     // },

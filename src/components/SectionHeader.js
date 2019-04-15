@@ -5,7 +5,8 @@ import { ifIphoneX } from 'react-native-iphone-x-helper';
 import Modal from 'react-native-modal';
 
 import {
-  SortMethodSelected
+  SortMethodSelected,
+  LastUpdated
 } from '../actions';
 
 class SectionHeader extends Component {
@@ -16,6 +17,10 @@ class SectionHeader extends Component {
       modalVisible: false,
       selected: this.props.sortMethod
     };
+  }
+
+  componentDidMount() {
+    this.props.LastUpdated();
   }
 
   setModalVisible(visible) {
@@ -34,6 +39,7 @@ class SectionHeader extends Component {
       return (
         <View style={styles.sectionHeaderContainerStyle}>
           <Text style={styles.sectionHeaderText}>{section.title}</Text>
+          <Text style={styles.lastUpdatedText}>Last updated {this.props.updatedTime}</Text>
         </View>
       );
     }
@@ -249,6 +255,13 @@ const styles = {
     color: '#595959'
   },
 
+  lastUpdatedText: {
+    fontFamily: 'Avenir-Roman',
+    fontSize: 13,
+    color: '#A3A3A3',
+    paddingRight: 18
+  },
+
   sorterText: {
     fontFamily: 'Avenir-Black',
     fontSize: 12,
@@ -273,7 +286,6 @@ const styles = {
     paddingLeft: 14
   },
 
-
   sorterHeaderText: {
     fontFamily: 'Avenir-Medium',
     fontSize: 14,
@@ -290,8 +302,9 @@ const styles = {
 
 const mapStateToProps = state => {
   return {
-    sortMethod: state.sort.sortMethod
+    sortMethod: state.sort.sortMethod,
+    updatedTime: state.misc.updatedTime
   };
 };
 
-export default connect(mapStateToProps, { SortMethodSelected })(SectionHeader);
+export default connect(mapStateToProps, { SortMethodSelected, LastUpdated })(SectionHeader);

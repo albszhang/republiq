@@ -207,6 +207,7 @@ class HomeScreen extends Component {
             this.props.DefaultColor();
             this.loadFeed(this.props.sortMethod);
           }}
+          autoHeadline={''}
         />
 
         {/* Button to Post */}
@@ -214,6 +215,7 @@ class HomeScreen extends Component {
           <TouchableOpacity
             onPress={() => {
               this.setModalVisible(true);
+              this.onClosePostModal();
             }}
             style={styles.button}
           >

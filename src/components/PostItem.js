@@ -22,10 +22,10 @@ class PostItem extends Component {
   constructor(props) {
     super(props);
 
-    console.log('through post item', this.props.profile);
+    //console.log('through post item', this.props.profile);
     //console.log('through props', this.props.news);
     if (this.props.profile) {
-      console.log('helloprofile?');
+      //console.log('helloprofile?');
       this.state = {
         score: this.props.item.fullscore,
         upvotes: this.props.item.upvotes,
@@ -45,7 +45,7 @@ class PostItem extends Component {
       };
     }
     if (this.props.news_feed.length === 0) {
-      console.log('hellonewslength?');
+      //console.log('hellonewslength?');
       this.state = {
         score: this.props.item.fullscore,
         upvotes: this.props.item.upvotes,
@@ -64,9 +64,9 @@ class PostItem extends Component {
         nOfArticles: ''
       };
     } else if (this.props.news_feed.length > 0 && !this.props.profile) {
-      console.log('else');
+      //console.log('else');
       const found = this.props.news_feed.find((e) => {
-        console.log('e.title');
+        //console.log('e.title');
         return e.title === this.props.item.topic;
       });
       this.state = {

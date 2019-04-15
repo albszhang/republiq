@@ -12,6 +12,7 @@ import {
   SIGNUP_USER_SUCCESS,
   LOGIN_USER_SUCCESS,
   EMPTY_INPUT,
+  GET_USERNAMES
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -22,6 +23,7 @@ const INITIAL_STATE = {
   user: [],
   username: '',
   error: '',
+  usernameData: [],
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -47,7 +49,7 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, username: action.payload };
     case AUTH_USER_FAIL:
       return { ...state, error: 'Sign In Error', password: '' };
-    case EMPTY_INPUT: 
+    case EMPTY_INPUT:
       return { ...state, username: '', email: '', password: '' };
     case EMAIL_EXISTS_ERROR:
       return {
@@ -61,6 +63,8 @@ export default (state = INITIAL_STATE, action) => {
         error: 'Sorry, this username already exists!',
         password: ''
       };
+    case GET_USERNAMES:
+      return { ...state, usernameData: action.payload };
     default:
       return state;
   }

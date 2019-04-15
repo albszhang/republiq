@@ -25,6 +25,16 @@ class PostModal extends Component {
     this.textColorChange();
   }
 
+  autoSelectHeadline() {
+    if (this.props.autoHeadline.length > 0) {
+      this.props.PostHeadlineSelected(this.props.autoHeadline);
+      this.textColorChange();
+      return this.props.autoHeadline;
+    } else {
+      return 'SELECT A HEADLINE';
+    }
+  }
+
   textColorChange() {
     if (this.props.headlineSelected && this.props.post.length > 0) {
       this.props.AllColorChange();
@@ -72,6 +82,8 @@ class PostModal extends Component {
     const {
       animationType, visible, onRequestClose, closeModal, postAction
     } = this.props;
+    //this.autoSelectHeadline();
+    //console.log('TEST', this.props.headlineSelected);
     this.textColorChange();
     return (
       <Modal
@@ -113,7 +125,8 @@ class PostModal extends Component {
                 dropdownStyle={{ paddingLeft: 18 }}
                 dropdownTextStyle={styles.dropdownTextStyle}
                 dropdownTextHighlightStyle={styles.dropdownTextHighlightStyle}
-                defaultValue={'SELECT A HEADLINE'}
+                // defaultValue={'SELECT A HEADLINE'}
+                defaultValue={this.autoSelectHeadline()}
                 adjustFrame={() => ({
                   width: Dimensions.get('window').width,
                   height: 205,

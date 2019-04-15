@@ -6,6 +6,7 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { WebBrowser } from 'expo';
 //import SafariView from 'react-native-safari-view';
 
+import { PostClose } from '../actions';
 import HeadlineInfo from './HeadlineInfo';
 
 class NewsHeader extends Component {
@@ -133,7 +134,10 @@ class NewsHeader extends Component {
       <View style={styles.headerContainerStyle}>
         {/* <View style={{ paddingLeft: 20, }}>*/}
           <TouchableOpacity
-            onPress={() => { this.props.nav.goBack(null); }}
+            onPress={() => {
+              this.props.nav.goBack(null);
+              this.props.PostClose();
+          }}
             style={{ paddingLeft: 20 }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', }}>
@@ -229,4 +233,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(withNavigation(NewsHeader));
+export default connect(mapStateToProps, { PostClose })(withNavigation(NewsHeader));
