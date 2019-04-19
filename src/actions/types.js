@@ -34,6 +34,7 @@ export const LOAD_POST_VOTED = 'load_post_voted';
 export const LOAD_SPECIFIC_POSTS = 'load_specific_posts';
 export const LOAD_HEADLINES = 'load_headlines';
 export const REFRESH_POSTS = 'refresh_posts';
+export const REFRESH_NEWS_POSTS = 'refresh_news_posts';
 
 export const LOAD_PROFILE_AGE = 'load_profile_age';
 export const LOAD_PROFILE_POSTS = 'load_profile_posts';

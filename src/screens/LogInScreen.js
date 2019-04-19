@@ -73,24 +73,6 @@ class SignInScreen extends Component {
 
     return (
       <View style={container}>
-        <View style={{ paddingTop: 35, alignItems: 'flex-end', paddingRight: 35 }}>
-          <TouchableOpacity
-            onPress={() => {
-              this.props.navigation.navigate('SignInScreen');
-              this.props.emptyInput();
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: 'Avenir-Roman',
-                fontSize: 15,
-                color: '#B8B8B8',
-                paddingTop: 10
-              }}
-            >Sign Up.</Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={{ paddingTop: 93 }}>
           <Image
             style={{ width: 45, height: 45 }}
@@ -140,12 +122,28 @@ class SignInScreen extends Component {
 
         {this.renderError()}
 
+        <TouchableOpacity
+          onPress={() => {
+            this.props.navigation.navigate('SignInScreen');
+            this.props.emptyInput();
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: 'Avenir-Roman',
+              fontSize: 14,
+              color: '#B8B8B8',
+              paddingTop: 10
+            }}
+          >Don't have an account yet? Sign up here.</Text>
+        </TouchableOpacity>
+
         <View style={{ paddingTop: 15 }}>
           <TouchableOpacity
             style={buttonStyle}
             onPress={this.onLoginButtonPress.bind(this)}
           >
-            <Text style={buttonTextStyle}>Log Up</Text>
+            <Text style={buttonTextStyle}>Log In</Text>
           </TouchableOpacity>
         </View>
 

@@ -172,10 +172,14 @@ export const getUsernames = () => {
 export const guestCreation = ({ usernameData, navigation }) => {
   console.log('data received?', usernameData);
   return (dispatch) => {
-    let username = 'xXninjaXx';
+    let username = rug.generate();
     let email = `${username}@email.com`;
     const password = 'password';
-    while (usernameData.includes(email) && username.length < 13) {
+    while (username.length > 13) {
+      username = rug.generate();
+      email = `${username}@email.com`;
+    }
+    while (usernameData.includes(email) && username.length > 13) {
       username = rug.generate();
       email = `${username}@email.com`;
     }

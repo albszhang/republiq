@@ -10,6 +10,7 @@ import {
   LOAD_NEWS,
   LOAD_HEADLINES,
   REFRESH_POSTS,
+  REFRESH_NEWS_POSTS,
 } from './types.js';
 
 pluralCheck = (s) => {
@@ -133,6 +134,7 @@ export const LoadTopPosts = () => {
       .then((snapshot) => {
       snapshot.docs.forEach(doc => {
         if (doc.exists) {
+          // console.log(doc.data());
           const postObj = doc.data();
 
           //Getting upvoted/downvoted status
@@ -479,5 +481,11 @@ export const LoadNews = () => {
 export const RefreshPosts = () => {
   return {
     type: REFRESH_POSTS,
+  };
+};
+
+export const RefreshNewsPosts = () => {
+  return {
+    type: REFRESH_NEWS_POSTS
   };
 };

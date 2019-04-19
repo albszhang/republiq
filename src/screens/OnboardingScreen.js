@@ -57,7 +57,7 @@ class SignInScreen extends Component {
             }}
           >
             <Text style={styles.headerStyle}>Welcome to Republiq.</Text>
-            <Text style={styles.secondStyle}>A way to engage with the world.</Text>
+            <Text style={styles.secondStyle}>A space to engage with the world.</Text>
           </Animated.View>
         </View>
       );
@@ -150,7 +150,7 @@ class SignInScreen extends Component {
             >
               <Text style={styles.headerStyle}>Speak Your Mind.</Text>
               <Text style={styles.secondStyle}>
-                Say what you think without the fear of backlash. Everyone is anonyous on Repubiq, and we’re commited to your privacy and free speech.
+                Say what you think - without fear of backlash. Everyone is anonymous on Republiq, and we’re committed to privacy and free speech.
               </Text>
             </View>
             <Image
@@ -166,24 +166,68 @@ class SignInScreen extends Component {
   renderButton() {
     if (this.state.page >= 4) {
       return (
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            this.props.navigation.navigate('SignInScreen');
-          }}
-        >
-          <Image
-            style={{ width: 46, height: 46 }}
-            source={require('../img/onboarding/arrow.png')}
-          />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              this.setState({ fadeAnim: new Animated.Value(0) });
+              setTimeout(() => { this.setState({ page: this.state.page - 1 }); }, 100);
+            }}
+          >
+            <Image
+              style={{ width: 46, height: 46 }}
+              source={require('../img/onboarding/backarrow.png')}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              this.props.navigation.navigate('SignInScreen');
+            }}
+          >
+            <Image
+              style={{ width: 46, height: 46 }}
+              source={require('../img/onboarding/arrow.png')}
+            />
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (this.state.page > 1) {
+      return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              this.setState({ fadeAnim: new Animated.Value(0) });
+              setTimeout(() => { this.setState({ page: this.state.page - 1 }); }, 100);
+            }}
+          >
+            <Image
+              style={{ width: 46, height: 46 }}
+              source={require('../img/onboarding/backarrow.png')}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              this.setState({ fadeAnim: new Animated.Value(0) });
+              setTimeout(() => { this.setState({ page: this.state.page + 1 }); }, 100);
+            }}
+          >
+            <Image
+              style={{ width: 46, height: 46 }}
+              source={require('../img/onboarding/arrow.png')}
+            />
+          </TouchableOpacity>
+        </View>
       );
     } else {
       return (
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            this.setState({ page: this.state.page + 1, fadeAnim: new Animated.Value(0) });
+            this.setState({ fadeAnim: new Animated.Value(0) });
+            setTimeout(() => { this.setState({ page: this.state.page + 1 }); }, 100);
           }}
         >
           <Image
@@ -191,7 +235,7 @@ class SignInScreen extends Component {
             source={require('../img/onboarding/arrow.png')}
           />
         </TouchableOpacity>
-      );
+      )
     }
   }
 
@@ -222,6 +266,8 @@ const styles = {
     shadowRadius: 20,
     shadowOpacity: 0.18,
     paddingBottom: 50,
+    paddingLeft: 20,
+    paddingRight: 20
   }
 };
 

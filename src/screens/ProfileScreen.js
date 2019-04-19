@@ -18,6 +18,7 @@ import {
   LoadHeadlines,
   LoadProfilePosts,
   LoadProfileAge,
+  LoadArticles
 } from '../actions';
 
 
@@ -64,12 +65,13 @@ class ProfileScreen extends Component {
       refresh: true,
     });
 
-    this.props.RefreshPosts(); //empties the post_feed action state
+    //this.props.RefreshPosts(); //empties the post_feed action state
     this.props.RefreshProfilePosts();
     //this.props.LoadProfileAge();
-    this.props.LoadNews();
-    this.props.LoadNewestPosts();
-    this.props.LoadHeadlines();
+    // this.props.LoadNews();
+    // this.props.LoadNewestPosts();
+    // this.props.LoadHeadlines();
+    // this.props.LoadArticles(this.props.navigation.getParam('title'));
     this.props.LoadProfilePosts(uid);
     //this.props.LoadSpecificPosts(this.props.navigation.getParam('title'));
 
@@ -372,5 +374,6 @@ export default connect(mapStateToProps, {
   LoadNews,
   LoadHeadlines,
   LoadProfilePosts,
-  LoadProfileAge
+  LoadProfileAge,
+  LoadArticles
 })(ProfileScreen);

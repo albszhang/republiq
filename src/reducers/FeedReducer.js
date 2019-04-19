@@ -6,6 +6,7 @@ import {
   LOAD_SPECIFIC_POSTS,
   LOAD_HEADLINES,
   REFRESH_POSTS,
+  REFRESH_NEWS_POSTS,
 
   UPDATE_COMMENTS
 } from '../actions/types';
@@ -55,6 +56,10 @@ export default (state = INITIAL_STATE, action) => {
       return state;
     case REFRESH_POSTS:
       return INITIAL_STATE;
+    case REFRESH_NEWS_POSTS:
+      return {
+        ...state, post_specific_feed: [], articles: []
+      };
     default:
       return state;
   }

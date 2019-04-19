@@ -12,10 +12,12 @@ import {
   PostClose,
   PostCreate,
   RefreshPosts,
+  RefreshNewsPosts,
   LoadNews,
   LoadHeadlines,
   LoadNewestPosts,
   LoadTopPosts,
+  LoadProfilePosts,
   //LoadSpecificPosts,
   LoadNewestSpecificPosts,
   LoadTopSpecificPosts,
@@ -49,19 +51,21 @@ class NewsScreen extends Component {
   }
 
   loadFeed = (sortMethod) => {
+    const uid = firebase.auth().currentUser.uid;
     this.setState({
       refresh: true,
     });
-    this.props.RefreshPosts(); //empties the post_feed action state
-    this.props.LoadNews();
+    this.props.RefreshNewsPosts(); //empties the post_feed action state
+    // this.props.LoadNews();
     this.props.LoadArticles(this.props.navigation.getParam('title'));
     //homepage feed loading
-    if (sortMethod === 'NEWEST') {
-      this.props.LoadNewestPosts();
-    } else if (sortMethod === 'TOP') {
-      this.props.LoadTopPosts();
-    }
-    this.props.LoadHeadlines();
+    // if (sortMethod === 'NEWEST') {
+    //   this.props.LoadNewestPosts();
+    // } else if (sortMethod === 'TOP') {
+    //   this.props.LoadTopPosts();
+    // }
+    // this.props.LoadProfilePosts(uid);
+    // this.props.LoadHeadlines();
 
     //newspage feed loading
     if (sortMethod === 'NEWEST') {
@@ -219,12 +223,14 @@ export default connect(mapStateToProps, {
   PostClose,
   PostCreate,
   RefreshPosts,
+  RefreshNewsPosts,
   LoadNews,
   LoadHeadlines,
   LoadNewestPosts,
   LoadTopPosts,
   LoadNewestSpecificPosts,
   LoadTopSpecificPosts,
+  LoadProfilePosts,
   //LoadSpecificPosts,
   UpdateComments,
   LoadArticles,

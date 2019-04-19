@@ -23,6 +23,10 @@ class SectionHeader extends Component {
     this.props.LastUpdated();
   }
 
+  componentDidUpdate() {
+    this.props.LastUpdated();
+  }
+
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }

@@ -70,24 +70,6 @@ class SignInScreen extends Component {
 
     return (
       <View style={container}>
-        <View style={{ paddingTop: 35, alignItems: 'flex-end', paddingRight: 35 }}>
-          <TouchableOpacity
-            onPress={() => {
-              this.props.navigation.navigate('LogInScreen');
-              this.props.emptyInput();
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: 'Avenir-Roman',
-                fontSize: 15,
-                color: '#B8B8B8',
-                paddingTop: 10
-              }}
-            >Log in.</Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={{ paddingTop: 93 }}>
           <Image
             style={{ width: 45, height: 45 }}
@@ -153,9 +135,8 @@ class SignInScreen extends Component {
 
       <TouchableOpacity
         onPress={() => {
-          //console.log('testing after', this.props.usernameData);
-          const { usernameData, navigation } = this.props;
-          this.props.guestCreation({ usernameData, navigation });
+          this.props.navigation.navigate('LogInScreen');
+          this.props.emptyInput();
         }}
       >
         <Text
@@ -165,7 +146,7 @@ class SignInScreen extends Component {
             color: '#B8B8B8',
             paddingTop: 10
           }}
-        >Continue as a guest.</Text>
+        >Already have an account? Log in here.</Text>
       </TouchableOpacity>
 
         {this.renderError()}
@@ -187,6 +168,19 @@ class SignInScreen extends Component {
             onPress={this.onSignupButtonPress.bind(this)}
           >
             <Text style={buttonTextStyle}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ paddingTop: 15 }}>
+          <TouchableOpacity
+            style={styles.buttonGuestStyle}
+            onPress={() => {
+              //console.log('testing after', this.props.usernameData);
+              const { usernameData, navigation } = this.props;
+              this.props.guestCreation({ usernameData, navigation });
+            }}
+          >
+            <Text style={styles.buttonGuestTextStyle}>Continue as guest</Text>
           </TouchableOpacity>
         </View>
 
@@ -235,6 +229,23 @@ const styles = {
     fontFamily: 'Avenir-Black',
     fontSize: 14,
     color: 'white'
+  },
+
+  buttonGuestStyle: {
+    height: 35,
+    width: 160,
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: '#FF5D53',
+    //backgroundColor: '#FF5D53',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  buttonGuestTextStyle: {
+    fontFamily: 'Avenir-Black',
+    fontSize: 14,
+    color: '#FF5D53',
   }
 };
 

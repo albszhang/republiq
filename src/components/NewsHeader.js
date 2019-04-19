@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, Linking, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, Dimensions, FlatList, ScrollView } from 'react-native';
 import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -123,6 +123,61 @@ class NewsHeader extends Component {
     );
   }
 
+  renderVertItem({ item, index }) {
+    return (
+      <TouchableOpacity
+        style={{
+          flexDirection: 'column',
+          paddingBottom: 12,
+          marginLeft: 20,
+          width: Dimensions.get('window').width,
+          borderBottomWidth: 0.5,
+          borderColor: '#DFDFDF'
+        }}
+        onPress={async () => {
+          const url = item.url;
+          let result = await WebBrowser.openBrowserAsync(url);
+          this.setState({ result });
+          //this.handlePressButtonAsync.bind(this);
+          // Linking.openURL(item.url)
+          // .catch((err) => console.error('An error occurred', err));
+
+        }}
+      >
+        {/* Article Info */}
+        <View style={styles.articleInfoContainerStyle}>
+          <View style={{ paddingRight: 8 }}>
+            <Image
+              //style={{ width: 22.7, height: 25.3 }}
+              style={{
+                flex: 1,
+                alignSelf: 'stretch',
+                width: 25,
+                height: 25,
+              }}
+              resizeMode={'contain'}
+              source={{ uri: `${item.imgurl}` }}
+              //source={{uri: 'https://firebasestorage.googleapis.com/v0/b/republiq-3a89c.appspot.com/o/newsIcons%2Fnytimes.png?alt=media&token=838be42d-e2ff-45ad-be73-b7decbcb3913'}}
+            />
+          </View>
+          <View style={{ paddingRight: 8 }}>
+            <Image
+              style={{ width: 4, height: 4 }}
+              source={require('../img/dotBig.png')}
+            />
+          </View>
+          <Text style={styles.timeTextStyle}>{item.time}</Text>
+        </View>
+        {/* Article Text */}
+        <View style={{ paddingRight: 24 }}>
+          <Text style={styles.articleVertTextStyle}>
+        {item.headline}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
   render() {
     //const { navigation } = this.props;
     const title = this.props.navigation.getParam('title');
@@ -149,7 +204,7 @@ class NewsHeader extends Component {
           </TouchableOpacity>
 
         {/* Title Section */}
-          <View style={{ paddingLeft: 20, paddingRight: 20 }}>
+          <View style={{ paddingLeft: 20, paddingRight: 20, borderBottomWidth: 0.5, borderColor: '#DFDFDF' }}>
             {/* Headline Title */}
             <View style={{ paddingTop: 20 }}>
               <Text style={styles.headlineTextStyle}>{ranking}. {title}</Text>
@@ -161,6 +216,7 @@ class NewsHeader extends Component {
               nOfComments={nOfComments}
             />
 
+{/*
             <Image
               style={{
                 width: 330,
@@ -171,8 +227,18 @@ class NewsHeader extends Component {
               }}
               source={require('../img/headlineElements/divider.png')}
             />
+*/}
           </View>
 
+          <ScrollView style={{ height: 250, flexGrow: 1 }}>
+            <FlatList
+              data={this.props.articles}
+              renderItem={this.renderVertItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </ScrollView>
+
+{/*
           <Carousel
             ref={(c) => { this._carousel = c; }}
             //data={tempData}
@@ -186,6 +252,8 @@ class NewsHeader extends Component {
             carouselRef
           />
           {this.pagination}
+*/}
+
         {/*  </View> */}
       </View>
     );
@@ -197,7 +265,7 @@ const styles = {
     backgroundColor: '#FFF',
     //height: 275,
     paddingTop: 40,
-    paddingBottom: 20,
+    // paddingBottom: 20,
     position: 'relative',
   },
   headlineTextStyle: {
@@ -219,11 +287,19 @@ const styles = {
     color: '#404040',
     paddingRight: 40
   },
+  articleVertTextStyle: {
+    fontFamily: 'Avenir-Medium',
+    letterSpacing: -0.5,
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#404040',
+    paddingRight: 40
+  },
   articleInfoContainerStyle: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: 12,
-    paddingBottom: 8
+    paddingBottom: 3
   },
 };
 

@@ -4,6 +4,8 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
+import { Permissions, Notifications } from 'expo';
+import firebase from 'firebase';
 
 import WhiteStatusBar from '../components/WhiteStatusBar';
 import PostModal from '../components/PostModal';
@@ -20,6 +22,7 @@ import {
   RefreshPosts,
   LoadNews,
   LoadHeadlines,
+  LoadProfilePosts,
   DefaultColor
 } from '../actions';
 
@@ -89,6 +92,7 @@ class HomeScreen extends Component {
   componentDidMount() {
     //Load Feed'
     this.loadFeed('TOP');
+    this.registerForPushNotifications();
   }
 
   onClosePostModal() {
@@ -99,7 +103,31 @@ class HomeScreen extends Component {
     this.setState({ modalVisible: visible });
   }
 
+  registerForPushNotifications = async () => {
+    // Check for existing Permissions
+    const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+    let finalStatus = status;
+
+    //if not existing permission, ask user for permission...
+    if (status !== 'granted') {
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+
+    //if not permission, exit the function...
+    if (finalStatus !== 'granted') { return; }
+
+    //get push notificaton token...
+    let token = await Notifications.getExpoPushTokenAsync();
+
+    //add token to firebase
+    const uid = firebase.auth().currentUser.uid;
+    console.log(uid);
+    firebase.firestore().collection('users').doc(uid).update({ expoPushToken: token });
+  }
+
   loadFeed = (sortMethod) => {
+    const uid = firebase.auth().currentUser.uid;
     this.setState({
       refresh: true,
       loading: true
@@ -114,7 +142,7 @@ class HomeScreen extends Component {
       this.props.LoadTopPosts();
     }
     this.props.LoadHeadlines();
-
+    this.props.LoadProfilePosts(uid);
     this.setState({
       refresh: false,
       loading: false
@@ -322,6 +350,7 @@ export default connect(mapStateToProps, {
   LoadNewestPosts,
   LoadTopPosts,
   LoadHeadlines,
+  LoadProfilePosts,
   LoadNews,
   DefaultColor
 })(HomeScreen);

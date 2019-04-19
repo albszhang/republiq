@@ -24,7 +24,7 @@ import { isAuthenticated, notAuthenticated } from './actions';
 const AuthStack = createStackNavigator(
   {
     //property shorthand, originally SignInScreen: SignInScreen, or AuthScreen: SignInScreen
-    OnboardingScreen, 
+    OnboardingScreen,
     SignInScreen,
     LogInScreen
 
@@ -57,9 +57,12 @@ const AppStackNavigator = createBottomTabNavigator(
     Profile: {
       screen: ProfileScreen
     },
-    //
+
     // Notif: {
     //   screen: NotifScreen
+    // },
+    // Manager: {
+    //   screen: ManagerScreen
     // },
   },
   {
@@ -95,6 +98,23 @@ const AppStackNavigator = createBottomTabNavigator(
               <Image
                 style={{ width: 28.6, height: 28.6 }}
                 source={require('./img/bottomTab/profileInactive.png')}
+              />
+            );
+          }
+        } else if (routeName === 'Notif') {
+          if (tintColor === 'tomato') {
+            return (
+              <Image
+                style={{ width: 25.14, height: 26.4
+                 }}
+                source={require('./img/bottomTab/notifsActive.png')}
+              />
+            );
+          } else if (tintColor === 'gray') {
+            return (
+              <Image
+                style={{ width: 25.14, height: 26.4 }}
+                source={require('./img/bottomTab/notifsInactive.png')}
               />
             );
           }
